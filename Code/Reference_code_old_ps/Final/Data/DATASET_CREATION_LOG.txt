@@ -1,0 +1,46 @@
+﻿========================================================================
+  LeakSense Twin - Unified Dataset Successfully Created!
+========================================================================
+
+FILE INFORMATION:
+  Location: Data\LeakSense_Twin_Unified_Dataset.xlsx
+  Size: 5.36 MB
+  Created: 2026-06-09 22.05.51
+
+DATASET SUMMARY:
+  Total Samples: 9,995
+    - Healthy: 5,000 (50.0%)
+    - Leak: 4,995 (50.0%)
+  
+  Features: 26 columns
+    - Metadata: 8 columns
+    - Raw Sensors: 15 columns
+    - Derived: 3 columns
+
+  Leak Zones: 5 zones x 3 severities = 15 combinations
+    Zone 1 - Intake: 999 samples
+    Zone 2 - Charge Air: 999 samples
+    Zone 3 - CAC/Manifold: 999 samples
+    Zone 4 - Exhaust Manifold: 999 samples
+    Zone 5 - DPF/SCR: 999 samples
+
+EXCEL SHEETS (6 sheets):
+  1. Summary - Dataset statistics (14 rows)
+  2. Data Dictionary - Column descriptions (26 rows)
+  3. Training Data - Full dataset (9,995 rows) *** USE THIS ***
+  4. Healthy Samples - Only healthy (5,000 rows)
+  5. Leak Samples - Only leaks (4,995 rows)
+  6. Zone Statistics - Per-zone stats (8 rows)
+
+READY FOR TRAINING:
+  - No missing values
+  - No duplicates
+  - Balanced classes (50/50)
+  - Even zone distribution
+  - All sensors validated
+  
+DOCUMENTATION:
+  - README_DATASET.md created in Data\ directory
+  - Contains usage examples and ML training code
+  
+========================================================================

@@ -1,0 +1,1070 @@
+LEAKSENSE TWIN
+VERSION 3 — UPDATE PROMPT
+DAX Engine Query System + Full Interactivity Layer + Real-Time Value Inspection
+Additive update to v1 + v2 — nothing is removed, everything is enhanced
+Based On
+LeakSense Twin v1 (Master Prompt) + v2 (Ultimate Prompt with DTG)
+New in v3
+DAX-based engine query layer · Full UI interactivity · Live value inspector · Real-time query console
+Rule
+DO NOT remove or replace anything from v1/v2. v3 is pure addition on top.
+Engine
+Cat C18 ACERT DITA · 18.1L Inline-6 · 597kW · Twin-Turbo · MEUI Injection
+Stack
+Python + FastAPI + DuckDB + DAX (embedded) + React + TypeScript + Zustand
+Why Version 3 — What Is Missing from v1 and v2
+LeakSense Twin v1 and v2 built a solid ML pipeline, 3D viewer, and Digital Twin Generator. What they did not fully address is how an engineer actually interacts with the running system — not just to simulate leaks but to ask arbitrary questions about engine state, query historical data, inspect live values against known thresholds, and get answers in natural language backed by real data.
+The Three Gaps v3 Closes
+GAP 1 — DAX Query Engine:
+  Engineers need to ask time-series questions like "Show me all windows where MAP_boost
+  dropped more than 15% in the last 2 hours" or "What was the average residual for Zone B
+  across all steady-state windows today?" — questions that need SQL-like power over sensor
+  data but must be answered in milliseconds. DAX (Data Analysis Expressions) provides
+  exactly this: a column-formula language optimised for time-series tabular data.
+GAP 2 — Full Interactivity:
+  v1/v2 let users enter threshold values and see probabilities. But the app was still
+  mostly read-only. v3 makes EVERY value on the dashboard interactive: click any sensor
+  reading to scrub its value, drag any chart bar to adjust and see cascade effects,
+  double-click any zone to enter inspection mode, right-click any residual to query its
+  history. The app becomes a live engineering workbench, not just a monitor.
+GAP 3 — Real-Time Value Inspector:
+  A floating inspector panel (like browser DevTools) that lets an engineer pin any sensor,
+  set custom alert thresholds, overlay twin-predicted vs actual, and compare across
+  multiple time windows side by side — all without leaving the dashboard.
+Section 1 — DAX-Based Engine Query System
+1.1 What Is DAX in This Context?
+DAX (Data Analysis Expressions) is a formula language originally from Microsoft Power BI / Analysis Services. In LeakSense Twin v3, we embed a DAX-inspired query layer powered by DuckDB — a fast in-process analytical database. This gives engineers a familiar, Excel-like formula syntax to query the engine sensor database without writing SQL.
+DAX vs SQL vs Natural Language — Why DAX?
+SQL: powerful but unfamiliar to most engineers. "SELECT AVG(MAP_boost) FROM..." is intimidating.
+Natural Language (LLM): flexible but slow, non-deterministic, sometimes wrong.
+DAX: familiar to anyone who uses Excel or Power BI. Fast, deterministic, built for time-series.
+DAX formula example (what the user types):
+  AVERAGEX(FILTER(SensorReadings, [MAP_boost] < 200), [MAF])
+  → "Average MAF in all windows where boost was below 200 kPa"
+The system translates this to DuckDB SQL internally, runs it, and returns results in < 50ms.
+Engineers who use Excel/Power BI can use LeakSense Twin with zero SQL training.
+1.2 DAX Functions to Support — Full List
+DAX Function
+Description
+LeakSense Example
+CALCULATE(expr, filter)
+Evaluates expr in a modified filter context
+CALCULATE(AVERAGE([MAF]), [zone]="B")
+FILTER(table, condition)
+Returns subset of table rows matching condition
+FILTER(Readings, [MAP_boost]<200)
+AVERAGEX(table, expr)
+Average of expr evaluated for each row
+AVERAGEX(FILTER(R,[steady]=1),[MAF])
+SUMX(table, expr)
+Sum of expr over each row
+SUMX(FILTER(R,[leak]=1),[confidence])
+COUNTX(table, expr)
+Count non-blank expr evaluations
+COUNTX(FILTER(R,[zone]="B"),1)
+MINX / MAXX(table,expr)
+Min/Max of expr over rows
+MINX(FILTER(R,[rpm]=1800),[dP_dpf])
+RANKX(table,expr)
+Rank of current row expr within table
+RANKX(ALL(R),[MAF],,ASC)
+RELATED(column)
+Navigate relationships between tables
+RELATED(LeakEvents[recommended_action])
+ALL(table/column)
+Remove filters from table or column
+ALL(SensorReadings)
+VALUES(column)
+Unique values of a column
+VALUES(SensorReadings[zone])
+DISTINCTCOUNT(column)
+Count distinct values
+DISTINCTCOUNT([zone])
+IF(cond,true,false)
+Conditional value
+IF([MAF]<800,"LOW","OK")
+DIVIDE(num,denom,alt)
+Safe division (no error on zero)
+DIVIDE([res_MAF],[MAF_baseline],0)
+EARLIER(column)
+Reference outer row in nested filter
+EARLIER([timestamp])
+DATEADD(col,n,unit)
+Date arithmetic
+DATEADD([timestamp],-1,"hour")
+DATESBTWEEN(col,s,e)
+Filter to date range
+DATESBETWEEN([ts],TODAY()-1,TODAY())
+TOPN(n,table,expr)
+Top N rows by expression
+TOPN(10,R,[confidence],DESC)
+PERCENTILE(table,pct,expr)
+Percentile of expression over rows
+PERCENTILE(R,0.95,[ef_deviation])
+STDEV(column)
+Standard deviation
+STDEV([MAP_boost])
+CORR(col1,col2)
+Pearson correlation between two columns
+CORR([MAF],[MAP_boost])
+1.3 DAX Table Model — The Five Engine Tables
+The DAX query engine operates over five logical tables backed by DuckDB. These match the PostgreSQL schema from v1/v2 but are cached in DuckDB for sub-50ms analytical query performance.
+Table Name
+Columns and Description
+SensorReadings
+timestamp, rpm, maf, map_boost, map_cac, t_cac_out, t_exh_man, dp_dpf, fuel_qty, is_steady_state, session_id
+TwinResiduals
+timestamp, res_maf, res_map_boost, res_t_cac_out, res_map_cac, res_t_exh_man, res_dp_dpf, ef_deviation, cosine_sim, twin_id
+LeakEvents
+detected_at, zone, confidence, severity, flow_loss_pct, go_no_go, recommended_action, resolved_at, twin_id
+ThresholdChecks
+checked_at, sensor_values (JSON), zone_probs (JSON), confidence, flow_loss_pct, go_no_go, twin_id
+EngineSpecs
+twin_id, name, displacement_L, n_cyl, bore_mm, stroke_mm, rated_kW, rated_rpm, max_torque_nm, torque_rpm, cac_eff, pr_rated, maf_baseline, ...all derived constants
+1.4 Pre-Built DAX Measures — Embed These in the System
+Measures are named DAX formulas that act like computed columns. Users can reference them by name in queries. The system ships with 20 pre-built measures covering the most common engine diagnostics.
+Pre-built DAX Measures — backend/dax/measures.py
+# These 20 measures are pre-registered at startup.
+# Users can reference them by name: e.g., AVERAGEX(SensorReadings, [Leak Rate])
+MEASURES = {
+    # Detection metrics
+    "Leak Rate":
+        "DIVIDE(COUNTX(FILTER(SensorReadings,[go_no_go]="NO-GO"),1),
+                COUNTX(SensorReadings,1),0)",
+    "Avg Confidence When Leaking":
+        "AVERAGEX(FILTER(LeakEvents,[confidence]>0),[confidence])",
+    "Avg Flow Loss":
+        "AVERAGEX(FILTER(LeakEvents,[flow_loss_pct]>0),[flow_loss_pct])",
+    "Peak EF Deviation":
+        "MAXX(TwinResiduals,[ef_deviation])",
+    "Detection Accuracy":
+        "DIVIDE(COUNTX(FILTER(LeakEvents,[confidence]>=0.85),1),
+                COUNTX(LeakEvents,1),0)",
+    # Sensor health
+    "MAF Deviation Pct":
+        "DIVIDE(ABS(AVERAGE(SensorReadings[maf])-842),842,0)*100",
+    "Boost Deviation Pct":
+        "DIVIDE(ABS(AVERAGE(SensorReadings[map_boost])-218),218,0)*100",
+    "Avg CAC Effectiveness":
+        "1 - DIVIDE(AVERAGE(SensorReadings[t_cac_out])-25,
+                    CALCULATE(AVERAGE([t_boost]),ALL())-25,0)",
+    "Steady State Coverage":
+        "DIVIDE(COUNTX(FILTER(SensorReadings,[is_steady_state]=1),1),
+                COUNTX(SensorReadings,1),0)",
+    # Zone analysis
+    "Most Common Leak Zone":
+        "FIRSTNONBLANK(TOPN(1,VALUES(LeakEvents[zone]),
+                       CALCULATE(COUNTX(LeakEvents,1)),DESC),[zone])",
+    "Zone B Leak Count":
+        "COUNTX(FILTER(LeakEvents,[zone]="B"),1)",
+    "Zone B Avg Confidence":
+        "AVERAGEX(FILTER(LeakEvents,[zone]="B"),[confidence])",
+    # Time analysis
+    "MTTD Minutes":
+        "AVERAGEX(LeakEvents,
+                  DATEDIFF([session_start],[detected_at],MINUTE))",
+    "Leak Events Today":
+        "COUNTX(FILTER(LeakEvents,
+                DATESBETWEEN([detected_at],TODAY(),TODAY()+1)),1)",
+    "Rolling 1Hr Leak Rate":
+        "DIVIDE(COUNTX(FILTER(LeakEvents,
+                [detected_at]>=DATEADD(NOW(),-1,"hour")),1),
+                COUNTX(SensorReadings,1)*3600,0)",
+    # Residual analysis
+    "Max MAF Residual Pct":
+        "MAXX(TwinResiduals,ABS(DIVIDE([res_maf],842,0)))*100",
+    "Avg Cosine Similarity":
+        "AVERAGEX(FILTER(TwinResiduals,[ef_deviation]>0),[cosine_sim])",
+    "Threshold Check Count Today":
+        "COUNTX(FILTER(ThresholdChecks,
+                DATESBETWEEN([checked_at],TODAY(),TODAY()+1)),1)",
+    # Performance
+    "Inference Latency P95":
+        "PERCENTILE(LeakEvents,0.95,[processing_ms])",
+    "System Uptime Pct":
+        "DIVIDE(COUNTX(FILTER(SensorReadings,[is_steady_state]=1),1),
+                COUNTX(SensorReadings,1),0)*100",
+}
+1.5 DAX Query Engine — Backend Implementation
+backend/dax/engine.py — Full DAX-to-DuckDB translator
+import duckdb, re, json
+from typing import Any
+from backend.dax.measures import MEASURES
+class DAXEngine:
+    """
+    Translates DAX expressions to DuckDB SQL and executes them.
+    Tables are loaded from PostgreSQL into DuckDB at startup and
+    refreshed every 30 seconds from the live sensor stream.
+    """
+    def __init__(self, pg_dsn: str):
+        self.conn = duckdb.connect(":memory:")  # in-process, no disk
+        self._load_tables_from_postgres(pg_dsn)
+        self._register_measures()
+    def _load_tables_from_postgres(self, pg_dsn: str):
+        """Load last 24h of data from PostgreSQL into DuckDB tables."""
+        # DuckDB can read from Postgres directly via postgres_scan extension
+        self.conn.execute("INSTALL postgres_scanner; LOAD postgres_scanner;")
+        tables = {
+            "SensorReadings": "SELECT * FROM sensor_readings WHERE timestamp > NOW()-INTERVAL 24 HOUR",
+            "TwinResiduals":   "SELECT * FROM twin_residuals WHERE timestamp > NOW()-INTERVAL 24 HOUR",
+            "LeakEvents":      "SELECT * FROM leak_events WHERE detected_at > NOW()-INTERVAL 7 DAY",
+            "ThresholdChecks": "SELECT * FROM threshold_checks WHERE checked_at > NOW()-INTERVAL 24 HOUR",
+            "EngineSpecs":     "SELECT * FROM engine_specs",
+        }
+        for name, sql in tables.items():
+            self.conn.execute(f"""
+                CREATE OR REPLACE TABLE {name} AS
+                SELECT * FROM postgres_scan('{pg_dsn}', '{sql}')""",
+            )
+    def _register_measures(self):
+        """Pre-compute all measures as views."""
+        for name, formula in MEASURES.items():
+            sql = self._dax_to_sql(formula)
+            self.conn.execute(f"CREATE OR REPLACE VIEW [_{name}] AS {sql}")
+    def query(self, dax_expression: str, timeout_ms: int = 5000) -> dict:
+        """
+        Execute a DAX expression and return results as dict.
+        Supports: scalar values, table results, and named measure references.
+        """
+        try:
+            # Expand named measures
+            expanded = self._expand_measures(dax_expression)
+            # Translate DAX to SQL
+            sql = self._dax_to_sql(expanded)
+            # Execute with timeout
+            result = self.conn.execute(f"SET statement_timeout={timeout_ms}; {sql}").df()
+            return {
+                "success": True,
+                "rows": result.to_dict(orient="records"),
+                "columns": list(result.columns),
+                "row_count": len(result),
+                "is_scalar": len(result)==1 and len(result.columns)==1,
+                "scalar_value": result.iloc[0,0] if len(result)==1 and len(result.columns)==1 else None
+            }
+        except Exception as e:
+            return {"success": False, "error": str(e), "rows": [], "columns": []}
+    def _expand_measures(self, expr: str) -> str:
+        """Replace [MeasureName] references with their formula."""
+        for name, formula in MEASURES.items():
+            expr = expr.replace(f"[{name}]", f"({formula})")
+        return expr
+    def _dax_to_sql(self, dax: str) -> str:
+        """
+        Core DAX-to-SQL translation.
+        Handles: CALCULATE, FILTER, AVERAGEX, SUMX, COUNTX,
+                 MINX, MAXX, IF, DIVIDE, TOPN, DATESBETWEEN,
+                 DATEADD, VALUES, ALL, RANKX, CORR, STDEV, PERCENTILE
+        """
+        sql = dax.strip()
+        # Table name normalisation
+        sql = re.sub(r"\bSensorReadings\b", "SensorReadings", sql)
+        sql = re.sub(r"\bLeakEvents\b", "LeakEvents", sql)
+        sql = re.sub(r"\bTwinResiduals\b", "TwinResiduals", sql)
+        sql = re.sub(r"\bThresholdChecks\b", "ThresholdChecks", sql)
+        sql = re.sub(r"\bEngineSpecs\b", "EngineSpecs", sql)
+        # Column references: [colname] → "colname"
+        sql = re.sub(r"\[([\w_]+)\]", r'"\1"', sql)
+        # CALCULATE(expr, filter) → SELECT expr FROM table WHERE filter
+        sql = re.sub(
+            r"CALCULATE\((.+?),\s*FILTER\(([\w]+),\s*(.+?)\)\)",
+            r"SELECT \1 FROM \2 WHERE \3",
+            sql, flags=re.DOTALL)
+        # AVERAGEX(FILTER(T,cond),expr) → SELECT AVG(expr) FROM T WHERE cond
+        sql = re.sub(
+            r"AVERAGEX\(FILTER\(([\w]+),\s*(.+?)\),\s*(.+?)\)",
+            r"SELECT AVG(\3) FROM \1 WHERE \2",
+            sql, flags=re.DOTALL)
+        # COUNTX(FILTER(T,cond),1) → SELECT COUNT(*) FROM T WHERE cond
+        sql = re.sub(
+            r"COUNTX\(FILTER\(([\w]+),\s*(.+?)\),\s*1\)",
+            r"SELECT COUNT(*) FROM \1 WHERE \2",
+            sql)
+        # MAXX/MINX(FILTER...) → SELECT MAX/MIN(...)
+        sql = re.sub(r"MAXX\(FILTER\(([\w]+),(.+?)\),(.+?)\)",
+                    r"SELECT MAX(\3) FROM \1 WHERE \2", sql)
+        sql = re.sub(r"MINX\(FILTER\(([\w]+),(.+?)\),(.+?)\)",
+                    r"SELECT MIN(\3) FROM \1 WHERE \2", sql)
+        # STDEV → STDDEV_POP
+        sql = sql.replace("STDEV(", "STDDEV_POP(")
+        # CORR(a,b) → CORR(a,b) (DuckDB supports this natively)
+        # PERCENTILE(table, pct, expr)
+        sql = re.sub(
+            r"PERCENTILE\(([\w]+),([\d.]+),(.+?)\)",
+            r"SELECT PERCENTILE_CONT(\2) WITHIN GROUP (ORDER BY \3) FROM \1",
+            sql)
+        # DIVIDE(num, denom, alt) → CASE WHEN denom=0 THEN alt ELSE num/denom END
+        sql = re.sub(
+            r"DIVIDE\((.+?),(.+?),(.+?)\)",
+            r"CASE WHEN (\2)=0 THEN \3 ELSE (\1)/(\2) END",
+            sql)
+        # IF(cond, true, false) → CASE WHEN cond THEN true ELSE false END
+        sql = re.sub(
+            r"IF\((.+?),(.+?),(.+?)\)",
+            r"CASE WHEN \1 THEN \2 ELSE \3 END",
+            sql)
+        # DATEADD(col, n, unit) → col + INTERVAL n unit
+        sql = re.sub(
+            r"DATEADD\((.+?),(-?\d+),"(.+?)"\)",
+            r"(\1 + INTERVAL \2 \3)",
+            sql)
+        # TOPN(n, table, expr, dir) → ORDER BY expr dir LIMIT n
+        sql = re.sub(
+            r"TOPN\((\d+),([\w]+),(.+?),(ASC|DESC)\)",
+            r"SELECT * FROM \2 ORDER BY \3 \4 LIMIT \1",
+            sql)
+        # Bare scalar: AVERAGE([col]) with no SELECT yet
+        if not sql.strip().upper().startswith("SELECT"):
+            sql = re.sub(r"AVERAGE\(([\w."]+)\)",
+                        r"SELECT AVG(\1) FROM SensorReadings", sql)
+        return sql
+    def refresh_tables(self):
+        """Call this every 30s from a background task to refresh DuckDB cache."""
+        self._load_tables_from_postgres(self._pg_dsn)
+1.6 DAX API Endpoints — Three New Routes
+backend/api/dax_api.py — New endpoints in v3
+from fastapi import APIRouter
+from backend.dax.engine import DAXEngine
+router = APIRouter(prefix="/api/dax", tags=["DAX Engine"])
+# POST /api/dax/query — Execute a DAX expression
+@router.post("/query")
+async def dax_query(body: dict):
+    """
+    Execute any DAX expression against the engine sensor database.
+    Returns scalar value, table, or error.
+    """
+    expr = body.get("expression", "")
+    twin_id = body.get("twin_id", "c18_default")
+    result = dax_engine.query(expr)
+    return {
+        "expression": expr,
+        "result": result,
+        "execution_ms": result.get("execution_ms", 0)
+    }
+# GET /api/dax/measures — List all pre-built measures with descriptions
+@router.get("/measures")
+async def list_measures():
+    """Returns all pre-built DAX measures and their formulas."""
+    return {"measures": [
+        {"name": k, "formula": v, "description": MEASURE_DESCRIPTIONS.get(k,"")}
+        for k, v in MEASURES.items()
+    ]}
+# POST /api/dax/validate — Validate DAX syntax without executing
+@router.post("/validate")
+async def validate_dax(body: dict):
+    """Parses and validates a DAX expression without running it."""
+    expr = body.get("expression", "")
+    try:
+        sql = dax_engine._dax_to_sql(dax_engine._expand_measures(expr))
+        dax_engine.conn.execute(f"EXPLAIN {sql}")
+        return {"valid": True, "translated_sql": sql}
+    except Exception as e:
+        return {"valid": False, "error": str(e)}
+# GET /api/dax/suggestions — Autocomplete DAX suggestions for the console UI
+@router.get("/suggestions")
+async def dax_suggestions(prefix: str = ""):
+    """Returns DAX function and measure name suggestions for the query console."""
+    funcs = ["CALCULATE","FILTER","AVERAGEX","SUMX","COUNTX","MINX","MAXX",
+             "IF","DIVIDE","TOPN","DATESBETWEEN","DATEADD","VALUES","ALL",
+             "RANKX","CORR","STDEV","PERCENTILE","RELATED","DISTINCTCOUNT"]
+    measures = list(MEASURES.keys())
+    tables = ["SensorReadings","TwinResiduals","LeakEvents","ThresholdChecks","EngineSpecs"]
+    all_items = funcs + [f"[{m}]" for m in measures] + tables
+    filtered = [x for x in all_items if prefix.upper() in x.upper()]
+    return {"suggestions": filtered[:20]}
+1.7 DAX Query Console — Frontend Component
+The DAX Query Console is a new panel in the frontend that gives engineers a code-editor-like interface to write and run DAX queries directly against the engine sensor database.
+frontend/src/components/DAXConsole.tsx — Full specification
+/**
+ * DAXConsole — Interactive DAX Query Console
+ *
+ * Visual Layout:
+ * ┌────────────────────────────────────────────────────────┐
+ * │ DAX QUERY CONSOLE           [MEASURES] [TABLES] [HELP] │
+ * ├────────────────────────────────────────────────────────┤
+ * │ QUICK QUERIES (clickable chips):                        │
+ * │ [Leak Rate Today] [Avg Confidence] [Top 5 Leak Windows] │
+ * │ [Boost Deviation] [MTTD Today] [Zone B Count]          │
+ * ├────────────────────────────────────────────────────────┤
+ * │ ┌──────────────────────────────────────────────────┐  │
+ * │ │ AVERAGEX(FILTER(SensorReadings, [map_boost]<200),│  │
+ * │ │          [maf])                                   │  │
+ * │ └──────────────────────────────────────────────────┘  │
+ * │  [▶ RUN  Ctrl+Enter]  [◻ CLEAR]  [↓ EXPORT CSV]       │
+ * ├────────────────────────────────────────────────────────┤
+ * │ RESULT (Table or Scalar):                               │
+ * │ Scalar: 734.2 kg/h                                      │
+ * │ — or —                                                  │
+ * │ ┌─────────────┬────────────┬──────────┐               │
+ * │ │ timestamp   │ map_boost  │ maf      │               │
+ * │ │ 10:32:15    │ 191.2      │ 762.1    │               │
+ * │ │ 10:32:16    │ 190.8      │ 758.9    │               │
+ * │ └─────────────┴────────────┴──────────┘               │
+ * │ 247 rows · 18ms                                        │
+ * └────────────────────────────────────────────────────────┘
+ *
+ * FEATURES:
+ * - Monaco Editor (same as VS Code) for DAX input
+ * - Syntax highlighting for DAX keywords, table names, measure names
+ * - Autocomplete: GET /api/dax/suggestions?prefix=AV → shows [AVERAGEX, AVERAGE...]
+ * - Real-time validation: underlines invalid syntax as user types (POST /api/dax/validate)
+ * - Quick query chips: pre-built common queries as one-click buttons
+ * - Result table: sortable, filterable, with pagination for large results
+ * - Scalar result: shown in large yellow Orbitron font with unit label
+ * - Execution time displayed in ms
+ * - Export: download result as CSV (client-side Blob)
+ * - Query history: last 20 queries saved to localStorage
+ * - [MEASURES] panel: accordion list of all 20 pre-built measures with formulas
+ * - [TABLES] panel: shows all 5 table schemas with column names and types
+ * - [HELP] panel: DAX function reference with examples for each function
+ * - Error display: friendly error messages (not raw SQL errors)
+ */
+// Keyboard shortcuts:
+// Ctrl+Enter: run query
+// Ctrl+Space: open autocomplete
+// Ctrl+Shift+F: format DAX expression
+// Ctrl+Up/Down: cycle through query history
+// Escape: clear result panel
+Quick Query Templates — Pre-Built for One Click
+Quick Query Name
+DAX Expression
+Leak Rate Today
+DIVIDE(COUNTX(FILTER(LeakEvents,[go_no_go]="NO-GO"),1),COUNTX(SensorReadings,1),0)*100
+Avg MAF Last Hour
+AVERAGEX(FILTER(SensorReadings,[timestamp]>=DATEADD(NOW(),-1,"hour")),[maf])
+Zone B Leak Count
+COUNTX(FILTER(LeakEvents,[zone]="B"),1)
+Top 10 Boost Drops
+TOPN(10,SensorReadings,([map_boost]-218)/218,ASC)
+Steady State Coverage
+DIVIDE(COUNTX(FILTER(SensorReadings,[is_steady_state]=1),1),COUNTX(SensorReadings,1),0)*100
+Peak EF Deviation
+MAXX(TwinResiduals,[ef_deviation])
+MAF-Boost Correlation
+CORR(SensorReadings[maf],SensorReadings[map_boost])
+MTTD Today (min)
+AVERAGEX(FILTER(LeakEvents,DATESBETWEEN([detected_at],TODAY(),TODAY()+1)),[mttd_min])
+Worst Zone Confidence
+TOPN(1,VALUES(LeakEvents[zone]),CALCULATE(AVERAGE([confidence])),DESC)
+Threshold Checks Today
+COUNTX(FILTER(ThresholdChecks,DATESBETWEEN([checked_at],TODAY(),TODAY()+1)),1)
+Section 2 — Full Interactivity Layer
+2.1 The Interactivity Philosophy
+v1 and v2 built a monitoring dashboard. v3 makes it an engineering workbench. Every number on the screen becomes a control surface. Engineers should be able to manipulate the engine state directly and see what happens — like a flight simulator for diesel engines.
+Interactivity Principles
+1. CLICK any value to scrub it — click the "842" MAF reading and drag left/right to change it
+2. DRAG any bar in the probability chart to set a probability and see what sensor values would cause it
+3. DOUBLE-CLICK any zone card to enter full-screen inspection mode for that zone
+4. RIGHT-CLICK any sensor gauge to open context menu: query history, set alert, compare windows
+5. HOVER any residual value to see the twin-predicted vs actual breakdown as a tooltip
+6. PIN any sensor to the persistent Inspector Panel — values persist across navigation
+7. COMPARE: drag sensor to comparison tray — overlay up to 3 time windows side by side
+8. ANNOTATE: click any point on the timeline to leave an engineer note (stored in DB)
+2.2 Interactive Sensor Gauges — v3 Enhancements
+Interaction
+Behaviour
+Click + drag on value
+Scrubs sensor value up/down. Triggers live evaluateThreshold() → zone probabilities update. Release: reverts to live value if connected, or stays for offline analysis.
+Double-click gauge
+Opens sensor detail modal: 24h history chart, distribution histogram, percentile position, twin residual trend, all annotated with leak events as vertical markers.
+Right-click gauge
+Context menu: "Pin to Inspector" | "Set Alert Threshold" | "Query History (DAX)" | "Compare to Previous Window" | "Export Last Hour CSV"
+Hold Shift + scroll
+Fine-tune scrub value ±0.1 per scroll tick instead of ±1
+Ctrl + click gauge
+Freeze this gauge at current value — it stops updating from WebSocket. Red border indicates frozen. Click again to unfreeze.
+Long-press (touch)
+Same as right-click on mobile — opens context menu sheet from bottom
+Hover any gauge
+Shows tooltip: current | baseline | residual | % delta | risk level | last 5 values sparkline
+2.3 Real-Time Value Inspector Panel
+The Inspector is a floating panel (like browser DevTools Element Inspector) that shows live values, history, and twin comparison for any pinned sensors. It persists across page navigation.
+frontend/src/components/Inspector.tsx — specification
+/**
+ * Inspector Panel — Floating live sensor inspector
+ *
+ * Triggered by: right-click gauge → "Pin to Inspector"
+ * Can pin up to 6 sensors simultaneously.
+ *
+ * Layout (resizable, draggable panel):
+ * ┌─────────────────────────────────────────────────────┐
+ * │ ⚙ LIVE INSPECTOR              [×] [−] [⊡]           │
+ * ├─────────────────────────────────────────────────────┤
+ * │ MAF  kg/h                              [unpin]       │
+ * │ Current:  ████████████ 842.0  ↑ +2.1 vs twin       │
+ * │ Baseline: 842.0 | Residual: +2.1 (+0.2%)           │
+ * │ Sparkline: ▁▂▃▄▅▆▇█▇▆▅▄▃▂▁ (last 30s)             │
+ * │ Alert: [ ] Enable  Threshold: [____] kg/h           │
+ * │ DAX: [Run AVERAGE([maf]) Last Hour]                 │
+ * ├─────────────────────────────────────────────────────┤
+ * │ MAP_boost  kPa                        [unpin]        │
+ * │ Current:  ███████████ 218.0  ↓ -1.2 vs twin        │
+ * │ Baseline: 218.0 | Residual: -1.2 (-0.5%)           │
+ * │ Sparkline: █▇▆▅▄▃▂▁▂▃▄▅▆▇█ (last 30s)             │
+ * │ Alert: [✓] Enable  Threshold: [195] kPa  ⚠ NEAR    │
+ * ├─────────────────────────────────────────────────────┤
+ * │ [+ PIN ANOTHER SENSOR]  [EXPORT ALL CSV]            │
+ * │ [DAX: CORR([maf],[map_boost]) = 0.912]             │
+ * └─────────────────────────────────────────────────────┘
+ *
+ * FEATURES:
+ * - Drag to reposition anywhere on screen
+ * - Resize by dragging corners
+ * - Minimize to a compact bar at bottom-right
+ * - Alert thresholds: user sets → system evaluates each update → amber warning near threshold
+ * - Each pinned sensor has a 30s sparkline rendered as SVG path
+ * - One-click DAX queries per sensor: average, max, percentile, correlation
+ * - State persisted to localStorage: survives page refresh
+ * - Compare mode: toggle to show Inspector over 2-window side-by-side layout
+ */
+2.4 Zone Inspection Mode — Double-Click Any Zone
+Double-clicking any zone card enters a full-screen Zone Inspection mode for that zone. This replaces the main canvas temporarily with a dedicated analysis view.
+Panel
+Content in Zone Inspection Mode
+Header
+Zone name + current status + confidence + flow loss estimate + last detected timestamp
+Sensor Detail Section
+Full 24h charts for all sensors that feed this zone. Twin predicted overlay in dashed line. Leak events as vertical red markers.
+Residual Trend Chart
+Residual value for each sensor in this zone over the last 2 hours. Shaded red when above threshold.
+Energy Field Zoom
+6×6 heatmap zoomed to show only rows/columns relevant to this zone. Highlighted cells pulse on active deviation.
+DAX Mini-Console
+Pre-loaded with zone-specific queries: "AVERAGEX(FILTER(LeakEvents,[zone]=\"B\"),..)" etc. User can edit and run.
+Component Diagram
+SVG diagram of the physical components in this zone (e.g., Zone 2: compressor → pipe → CAC → manifold). Each component highlighted by residual severity.
+Action Panel
+Torque specs, inspection checklist, maintenance history, estimated repair time, next scheduled inspection date.
+Exit Button
+Returns to main dashboard. Zone card shows "INSPECTED" timestamp.
+2.5 Interactive Threshold Scrubber — v3 Enhancement
+The ThresholdPanel from v2 is upgraded with direct scrubbing on the probability chart. Users can drag bars on the chart to set a target probability and the system back-calculates what sensor values would produce that probability.
+ThresholdScrubber enhancement — adds to v2 ThresholdPanel
+/**
+ * ThresholdScrubber — drag probability bars to back-calculate sensor values
+ *
+ * How it works:
+ * 1. User drags Zone B bar from 30% → 70%
+ * 2. System runs inverse-physics: "what MAF and MAP_boost values would
+ *    cause 70% Zone B probability?"
+ * 3. Sensor input fields update to show those values
+ * 4. Zone B lights up in 3D viewer to the 70% intensity glow
+ * 5. Recommended action updates to reflect the 70% scenario
+ *
+ * Inverse physics algorithm:
+ * - Start from zone probability target (e.g., 70% for Zone B)
+ * - Zone B primary sensor: MAP_boost (from LEAK_DEF)
+ * - Required MAP_boost residual for 70% prob:
+ *   required_residual = -baseline * 0.70 * severity_multiplier
+ * - Required MAP_boost value:
+ *   required_MAP_boost = baseline + required_residual
+ * - Set MAP_cac proportionally: MAP_cac = MAP_boost * (213/218)
+ * - Set T_cac_out: T_cac_out = baseline + 8 * severity_multiplier (cascade)
+ * - Update all input fields with computed values
+ *
+ * Visual feedback during drag:
+ * - Sensor input fields pulse highlight as their values change
+ * - 3D viewer zone glow intensity tracks the dragged probability
+ * - Sparkline in Inspector panel updates to show the implied sensor trajectory
+ */
+2.6 New Interactive Features — Summary Table
+Feature
+Where it Lives
+What it Enables
+Scrub-to-inspect
+Any sensor gauge — click+drag value
+Test "what if MAF drops to 780?" instantly without typing
+Zone inspection mode
+Double-click any zone card
+Full-screen analysis of one zone with all sub-sensors
+Inspector panel
+Right-click gauge → Pin
+Floating live monitor for up to 6 sensors simultaneously
+Alert thresholds
+Inspector panel per sensor
+Auto-warning when sensor approaches user-set limit
+Probability scrubber
+ThresholdPanel bar chart drag
+Back-calculate what sensor values cause a target leak probability
+DAX console
+New tab in left panel
+Free-form analytical queries with autocomplete and measures
+Quick DAX chips
+Above DAX console input
+10 pre-built queries as one-click buttons
+Timeline annotate
+Click any timeline point
+Engineers can leave notes linked to specific timestamps
+Comparison tray
+Drag sensor to tray area
+Overlay up to 3 time windows of any sensor side by side
+Freeze gauge
+Ctrl+Click any gauge
+Lock a sensor display at current value for reference
+Context menu
+Right-click any element
+Access all advanced actions without navigating away
+Export from context
+Right-click → Export
+Download any sensor history as CSV from any gauge
+3D threshold sync
+ThresholdPanel linked to 3D viewer
+Threshold values appear as glows in the 3D engine model
+DAX-to-3D highlight
+DAX query result highlights engine
+"FILTER(SensorReadings,[map_boost]<200)" glows Zone 2 in 3D
+Mobile gestures
+All touch targets ≥44px
+Long-press=right-click, pinch=zoom, swipe=navigate panels
+Section 3 — 3D Digital Twin Interactive Updates
+3.1 Making the 3D Viewer a True Control Surface
+The 3D viewer in v1/v2 was primarily a visualization tool — you could rotate it and click zones, but you could not directly manipulate engine state from within it. v3 makes the 3D engine model a bidirectional interface: not just displaying state but allowing the user to change it by interacting with 3D objects directly.
+3D Interaction Additions in v3
+1. CLICK any 3D part → opens the Inspector Panel pre-loaded with that parts sensors
+2. RIGHT-CLICK any 3D part → context menu with: Inspect | Simulate Leak | Query DAX | Label | Isolate
+3. HOVER any 3D pipe segment → shows a tooltip with current flow rate and twin residual
+4. DRAG the RPM slider on the left panel → engine animation speed changes in real-time AND sensor values update AND flow line animation speed adjusts
+5. SCRUB the airflow line → click any airflow line segment and drag to restrict it → simulates a leak at that point → zone probability updates live
+6. ISOLATE mode → click any part to make all other parts semi-transparent → focus on one component
+7. MEASUREMENT mode → click two points on the engine → shows the pipe path and its current pressure/temp along the route
+8. HEAT MAP overlay → toggle to colour-code the entire engine by temperature (blue=cool, red=hot) using current sensor values
+3.2 Airflow Line Dragging — Leak Simulation by Drawing
+The most powerful new 3D interaction: users can simulate a leak by clicking directly on any airflow line in the 3D scene and dragging to "pinch" it. This triggers a proportional leak at that point.
+3D viewer JS — Airflow drag-to-leak interaction
+// Add to the flow canvas (2D overlay), after drawFlows()
+// Track which path segment is being hovered
+let hoveredFlowPath = null;
+let isDraggingFlow = false;
+let flowDragStartY = 0;
+let flowDragLeak = 0;  // 0.0 to 1.0 = 0% to 100% restriction
+fCvs.addEventListener("mousemove", (e) => {
+  if (isDraggingFlow) {
+    // Calculate restriction from drag distance
+    const dy = e.clientY - flowDragStartY;
+    flowDragLeak = Math.max(0, Math.min(0.99, dy / 100));
+    // Apply to threshold panel in real-time
+    applyFlowRestriction(hoveredFlowPath, flowDragLeak);
+    drawFlowWithRestriction(hoveredFlowPath, flowDragLeak);
+    return;
+  }
+  // Check if mouse is near any flow path
+  const nearPath = getFlowPathAtPoint(e.clientX, e.clientY, 8);
+  if (nearPath !== hoveredFlowPath) {
+    hoveredFlowPath = nearPath;
+    fCvs.style.cursor = nearPath ? "ns-resize" : "default";
+    if (nearPath) showFlowTooltip(e.clientX, e.clientY, nearPath);
+    else hideFlowTooltip();
+  }
+});
+fCvs.addEventListener("mousedown", (e) => {
+  if (hoveredFlowPath) {
+    isDraggingFlow = true;
+    flowDragStartY = e.clientY;
+    APP.autoRot = false;
+  }
+});
+window.addEventListener("mouseup", () => {
+  if (isDraggingFlow && flowDragLeak > 0.1) {
+    // Convert flow restriction to zone leak
+    const zoneMap = {intake:"A", boost:"B", cac:"C", exhaust:"D", fuel:"F"};
+    const zone = zoneMap[hoveredFlowPath.name];
+    if (zone) {
+      APP.severity = flowDragLeak < 0.15 ? 1 : flowDragLeak < 0.35 ? 2 : 3;
+      simLeak(zone);
+    }
+  } else if (isDraggingFlow) {
+    clearLeak();
+  }
+  isDraggingFlow = false;
+  flowDragLeak = 0;
+});
+function applyFlowRestriction(path, restriction) {
+  // Update sensor values in threshold panel based on restriction
+  if (!path) return;
+  if (path.name === "boost") {
+    APP.thresholdValues.MAP_boost = 218 * (1 - restriction * 0.8);
+    APP.thresholdValues.MAP_cac   = 213 * (1 - restriction * 0.9);
+  } else if (path.name === "intake") {
+    APP.thresholdValues.MAF = 842 * (1 - restriction);
+  } else if (path.name === "exhaust") {
+    APP.thresholdValues.T_exh_man = 512 * (1 - restriction * 0.15);
+  }
+  // Live update threshold preview
+  updateThresholdPreview();
+}
+function drawFlowWithRestriction(path, restriction) {
+  // Draw a "pinch" visual on the restricted flow line
+  if (!path || restriction < 0.05) return;
+  const midPt = projPt(path.pts[Math.floor(path.pts.length/2)]);
+  fctx.save();
+  fctx.translate(midPt.x, midPt.y);
+  // Draw constriction arrows
+  const gap = (1-restriction)*14;
+  fctx.strokeStyle = `rgba(255,34,68,${0.4+restriction*0.5})`;
+  fctx.lineWidth = 2; fctx.shadowColor = "#FF2244"; fctx.shadowBlur=8;
+  fctx.beginPath(); fctx.moveTo(-12,0); fctx.lineTo(-gap,0); fctx.stroke();
+  fctx.beginPath(); fctx.moveTo(12,0);  fctx.lineTo(gap,0);  fctx.stroke();
+  // Restriction percentage label
+  fctx.fillStyle = "#FF2244"; fctx.font="bold 10px Share Tech Mono";
+  fctx.textAlign="center";
+  fctx.fillText(`${(restriction*100).toFixed(0)}% restricted`, 0, -16);
+  fctx.restore();
+}
+3.3 Heat Map Overlay Mode
+3D viewer JS — Toggle heat map mode (add to tick loop)
+let heatMapMode = false;
+function toggleHeatMap() {
+  heatMapMode = !heatMapMode;
+  document.getElementById("btn-heat").classList.toggle("on", heatMapMode);
+  if (!heatMapMode) {
+    // Reset all materials to originals
+    EG.traverse(c => {
+      if (c.isMesh && c._originalColor) {
+        c.material.color.setHex(c._originalColor);
+        c.material.emissiveIntensity = c._originalEI || 0;
+      }
+    });
+    return;
+  }
+  // Store original colours on first activation
+  EG.traverse(c => {
+    if (c.isMesh && !c._originalColor) {
+      c._originalColor = c.material.color.getHex();
+      c._originalEI = c.material.emissiveIntensity || 0;
+    }
+  });
+}
+function applyHeatMap(sensors) {
+  if (!heatMapMode) return;
+  // Map temperature sensors to 3D zones
+  const tempMap = {
+    1: sensors.T_cac_out,   // intake zone temp
+    2: sensors.T_cac_out,   // charge air zone temp
+    3: sensors.T_exh_man,   // exhaust zone temp (hottest)
+    4: sensors.T_cac_out + 20, // fuel zone (slightly warm)
+  };
+  const T_min = 40, T_max = 600;  // engineering range
+  Object.entries(tempMap).forEach(([zone, T]) => {
+    const t = Math.max(0, Math.min(1, (T - T_min)/(T_max - T_min)));
+    // Interpolate blue(cool) → green → yellow → red(hot)
+    let r, g, b;
+    if (t < 0.5) { r=0; g=Math.round(t*2*255); b=Math.round((1-t*2)*255); }
+    else { r=Math.round((t-0.5)*2*255); g=Math.round((1-(t-0.5)*2)*255); b=0; }
+    const hexCol = (r<<16)|(g<<8)|b;
+    ZP[parseInt(zone)].forEach(p => {
+      const apply = m => {
+        if (m.isMesh && m.material) {
+          m.material.color.setHex(hexCol);
+          m.material.emissiveIntensity = t * 0.3;
+          m.material.emissive = new THREE.Color(hexCol);
+        }
+      };
+      if (p.isGroup) p.children.forEach(apply); else apply(p);
+    });
+  });
+}
+// Call in tick() after updateSensors():
+// applyHeatMap({ T_cac_out: currentT_cac, T_exh_man: currentT_exh });
+Section 4 — v3 Update Prompts (Paste-Ready)
+These are the exact prompts to paste into your AI coding agent to implement the v3 updates. Each prompt explicitly states that it is an ADDITIVE update — do not replace v1/v2 code.
+4.1 — Backend v3 Update Prompt
+=== LEAKSENSE TWIN v3 — BACKEND UPDATE PROMPT (Additive to v1+v2) ===
+You are continuing development of LeakSense Twin. v1 and v2 are already built.
+DO NOT modify or remove any existing code. This is a PURE ADDITION.
+ADD the following to the existing backend:
+1. INSTALL NEW DEPENDENCIES (add to requirements.txt):
+   duckdb>=0.9.0
+   monaco-editor  # for frontend, not backend
+2. CREATE backend/dax/ package with:
+   backend/dax/__init__.py
+   backend/dax/measures.py  — MEASURES dict with 20 pre-built DAX measures
+   backend/dax/engine.py    — DAXEngine class (full implementation per Section 1.5)
+3. CREATE backend/api/dax_api.py with 4 new endpoints:
+   POST /api/dax/query      — execute DAX expression → result dict
+   GET  /api/dax/measures   — list all measures with formulas
+   POST /api/dax/validate   — validate DAX syntax without executing
+   GET  /api/dax/suggestions?prefix= — autocomplete suggestions
+4. ADD to backend/main.py (after existing router mounts):
+   from backend.api.dax_api import router as dax_router
+   app.include_router(dax_router)
+   # Initialize DAX engine at startup:
+   @app.on_event("startup")
+   async def startup_dax():
+       from backend.dax.engine import DAXEngine
+       app.state.dax = DAXEngine(os.getenv("DB_URL"))
+5. ADD to backend/db/models.py (new table, do not change existing):
+   class DAXQueryLog(Base):
+       __tablename__ = "dax_query_log"
+       id = Column(UUID, primary_key=True, default=uuid4)
+       queried_at = Column(DateTime, nullable=False)
+       expression = Column(Text)
+       translated_sql = Column(Text)
+       row_count = Column(Integer)
+       execution_ms = Column(Float)
+       success = Column(Boolean)
+       error_msg = Column(Text, nullable=True)
+6. ADD background refresh task to backend/main.py:
+   from apscheduler.schedulers.asyncio import AsyncIOScheduler
+   scheduler = AsyncIOScheduler()
+   scheduler.add_job(lambda: app.state.dax.refresh_tables(), "interval", seconds=30)
+   scheduler.start()
+7. ADD to POST /api/predict response (existing endpoint — add two new fields only):
+   "dax_measures": {
+       "rolling_1hr_leak_rate": dax.query("MEASURE Rolling 1Hr Leak Rate").scalar,
+       "steady_state_coverage": dax.query("MEASURE Steady State Coverage").scalar,
+   }
+8. VALIDATION: After implementation:
+   curl -X POST http://localhost:8000/api/dax/query \
+     -H "Content-Type: application/json" \
+     -d '"expression": "AVERAGEX(SensorReadings, [maf])"}" \
+   → should return {"success":true,"scalar_value":~842,"execution_ms":<50}
+4.2 — Frontend v3 Update Prompt
+=== LEAKSENSE TWIN v3 — FRONTEND UPDATE PROMPT (Additive to v1+v2) ===
+v1 and v2 frontend are already built. DO NOT modify existing components.
+ADD the following new components and enhance existing ones.
+NEW COMPONENTS TO CREATE:
+1. frontend/src/components/DAXConsole.tsx
+   - Monaco Editor for DAX input (npm install @monaco-editor/react)
+   - Syntax highlighting for DAX keywords and table/measure names
+   - Autocomplete via GET /api/dax/suggestions
+   - Real-time validation via POST /api/dax/validate (debounced 500ms)
+   - Result panel: table view for multi-row, yellow Orbitron scalar for single value
+   - 10 quick query chips above the editor (see Section 1.7 table)
+   - Query history in localStorage (last 20 queries)
+   - [▶ RUN Ctrl+Enter] [◻ CLEAR] [↓ EXPORT CSV] buttons
+   - [MEASURES] panel accordion, [TABLES] panel, [HELP] panel
+2. frontend/src/components/Inspector.tsx
+   - Floating, draggable, resizable panel
+   - Pin up to 6 sensors (from right-click context menu)
+   - Per-sensor: current value, baseline, residual, 30s sparkline SVG, alert threshold input
+   - Alert logic: amber when value within 15% of threshold, red when exceeded
+   - Bottom: DAX correlation query between any two pinned sensors
+   - State in localStorage: pinned sensors survive refresh
+3. frontend/src/components/ZoneInspection.tsx
+   - Full-screen overlay on double-click of zone card
+   - 24h sensor history charts for zone-relevant sensors
+   - Twin predicted vs actual overlay (dashed line = twin prediction)
+   - Energy field heatmap zoomed to zone rows
+   - DAX mini-console pre-loaded with zone queries
+   - SVG component diagram of physical parts in zone
+   - Action panel: torque specs, inspection checklist, maintenance notes
+4. frontend/src/store/daxStore.ts (Zustand)
+   - queryHistory: string[]
+   - lastResult: DAXResult | null
+   - isQuerying: boolean
+   - pinnedSensors: string[] (for Inspector)
+   - inspectorAlerts: Record<string, number> (sensor → alert threshold)
+   - runQuery(expr: string): Promise<void>
+   - pinSensor(key: string): void
+   - setAlert(key: string, threshold: number): void
+ENHANCE EXISTING COMPONENTS (add to existing, do not rewrite):
+5. SensorGauge.tsx — add to each gauge:
+   - onMouseDown: start scrub-drag (track delta, call onValueScrub callback)
+   - onDoubleClick: open ZoneInspection for this sensor's zone
+   - onContextMenu: show context menu (Pin | Alert | Query | Compare | Export)
+   - Ctrl+Click: freeze/unfreeze gauge
+   - Hover tooltip: current | baseline | residual | risk | sparkline
+6. Dashboard.tsx — add to layout:
+   - New tab "DAX CONSOLE" alongside existing tabs
+   - Inspector panel always rendered (hidden if no sensors pinned)
+   - Heat map toggle button in topbar
+   - Comparison tray at bottom (hidden until sensor dragged in)
+7. LeftPanel.tsx — add below existing controls:
+   - DAX Quick Queries section with 10 chip buttons
+   - Each chip calls runQuery(dax_expression) from daxStore
+8. ThresholdPanel.tsx — enhance:
+   - Add probability scrubber: bar chart bars are now draggable
+   - On bar drag: call inverseProbability(zone, target_prob) → fill sensor inputs
+   - Implement inverseProbability() using the physics back-calculation
+   - Add "Sync to 3D" toggle: when on, zone probabilities drive 3D glow intensity
+VALIDATION after implementation:
+  □ DAX Console: type AVERAGE([maf]) → result ~842 appears
+  □ Quick chip "Leak Rate Today" → number appears < 100ms
+  □ Right-click MAF gauge → "Pin to Inspector" → Inspector panel opens
+  □ Inspector alert: set MAP_boost alert at 195 → drag MAP_boost value to 194 → red alert
+  □ Double-click Zone 2 card → ZoneInspection full-screen opens
+  □ ThresholdPanel: drag Zone B bar from 5% → 60% → MAP_boost input updates
+4.3 — 3D Viewer v3 Update Prompt
+=== LEAKSENSE TWIN v3 — 3D VIEWER UPDATE PROMPT (Additive to v1+v2) ===
+The 3D viewer HTML file from v2 is already complete.
+ADD the following interactions and features. Do not remove any existing code.
+Add new code in clearly marked // v3 addition sections.
+ADDITIONS TO MAKE IN THE HTML FILE:
+1. NEW TOPBAR BUTTONS (add after existing buttons in #topbar):
+   <button class="tb-btn btn-heat" id="btn-heat" onclick="toggleHeatMap()">🌡 HEAT MAP</button>
+   <button class="tb-btn btn-msr"  id="btn-msr"  onclick="toggleMeasure()">📐 MEASURE</button>
+   <button class="tb-btn btn-iso"  id="btn-iso"  onclick="toggleIsolate()">◎ ISOLATE</button>
+2. ADD FLOW CANVAS INTERACTION (Section 3.2 full code):
+   - Insert hoveredFlowPath, isDraggingFlow, flowDragStartY, flowDragLeak declarations
+     at the TOP of <script> with all other state variables
+   - Add mousemove/mousedown/mouseup listeners on fCvs (not cvs)
+   - Add applyFlowRestriction(), drawFlowWithRestriction() functions
+   - In drawFlows(): call drawFlowWithRestriction if flowDragLeak>0.05
+3. ADD HEAT MAP MODE (Section 3.3 full code):
+   - heatMapMode variable at top
+   - toggleHeatMap() function
+   - applyHeatMap(sensors) function
+   - In tick(): call applyHeatMap({T_cac_out: currentVal, T_exh_man: currentVal})
+   - Source currentVal from APP.thresholdValues or last sensor update
+4. ADD ISOLATE MODE:
+   let isolatedMesh = null;
+   function toggleIsolate() { ... }
+   function isolatePart(mesh) {
+     if (isolatedMesh === mesh) { restoreAll(); isolatedMesh=null; return; }
+     isolatedMesh = mesh;
+     EG.traverse(c => {
+       if (c.isMesh && c !== mesh) {
+         c.material.transparent = true;
+         c.material.opacity = 0.08;
+       }
+     });
+     mesh.material.transparent = false; mesh.material.opacity = 1;
+   }
+   // In onClk(): if isolateMode, call isolatePart(hit.object)
+5. ENHANCE RIGHT-CLICK CONTEXT MENU on 3D engine parts:
+   cvs.addEventListener("contextmenu", (e) => {
+     e.preventDefault();
+     // Raycast at click position
+     // Show floating menu div at e.clientX, e.clientY with options:
+     // [Inspect] [Simulate Leak] [Query DAX] [Toggle Label] [Isolate]
+     // "Query DAX" opens mini DAX console in overlay with zone query pre-loaded
+   });
+6. ADD PIPE FLOW TOOLTIP:
+   - hovering within 8px of any flow path shows tooltip div
+   - Tooltip shows: path name + current sensor value for primary sensor
+   - Example: "BOOST PIPE — MAP_boost: 218 kPa — Residual: +0.2%"
+7. ADD TWIN SELECTOR DROPDOWN (connect to DTG API):
+   Add to topbar: <select id="twin-sel"> populated from GET /api/dtg/list
+   On change: call onTwinChange(twinId) → fetch derived constants → updateBaselinesFromTwin()
+   Graceful fallback if backend not running: keep C18 defaults silently
+8. ADD DAX MINI-CONSOLE overlay in 3D viewer:
+   <div id="dax-overlay"> — hidden by default
+   [D] key toggles it — shows/hides a compact DAX query box over the canvas
+   Input sends POST to /api/dax/query if backend available
+   Falls back to embedded evaluateThreshold() logic if offline
+   Result displayed as floating card in top-right corner of canvas
+VALIDATION:
+  □ Drag any airflow line → sensor inputs update live → Zone probability changes
+  □ HEAT MAP button → engine colour-codes by temperature
+  □ ISOLATE click on exhaust manifold → all other parts go 8% opacity
+  □ Right-click turbo → context menu appears
+  □ Hover boost pipe → tooltip shows MAP_boost current value
+  □ Twin selector dropdown → changes sensor baselines correctly
+  □ [D] key → DAX mini-console opens → AVERAGE([maf]) → result appears
+Section 5 — v3 Build Order (What to Do After v1+v2)
+This order ensures v3 additions never break the existing v1/v2 system. Each step is independently testable.
+Step
+What to Build
+Validation Check
+1
+Add duckdb to requirements.txt and install. Verify DuckDB imports in Python.
+python -c "import duckdb; print(duckdb.__version__)"
+2
+Create backend/dax/measures.py with all 20 MEASURES dict entries.
+python -c "from backend.dax.measures import MEASURES; print(len(MEASURES))" → 20
+3
+Create DAXEngine class in backend/dax/engine.py (without _dax_to_sql first — just stub).
+python -c "from backend.dax.engine import DAXEngine" → no import errors
+4
+Implement _dax_to_sql() method with all regex translations. Test each pattern separately.
+python tests/test_dax_engine.py → all pattern tests pass
+5
+Create backend/api/dax_api.py with 4 endpoints. Mount in main.py.
+curl GET /api/dax/measures → 20 measures returned
+6
+POST /api/dax/validate endpoint working with EXPLAIN translation.
+curl POST /api/dax/validate expression=AVERAGE([maf]) → valid:true
+7
+POST /api/dax/query endpoint with real DuckDB execution.
+curl POST /api/dax/query → scalar ~842 for AVERAGE([maf])
+8
+Background refresh task with APScheduler every 30s.
+Wait 30s → query returns fresh data from last sensor update
+9
+Add DAXQueryLog table migration and run alembic upgrade.
+alembic upgrade head → dax_query_log table exists in DB
+10
+Frontend: npm install @monaco-editor/react → Create DAXConsole.tsx skeleton.
+Browser → DAX tab shows Monaco editor without errors
+11
+Wire autocomplete: GET /api/dax/suggestions called on Ctrl+Space in editor.
+Type AV in console → AVERAGEX suggested
+12
+Wire validation: POST /api/dax/validate called 500ms after typing stops.
+Type invalid DAX → red underline appears
+13
+Wire execution: POST /api/dax/query on Ctrl+Enter → result table renders.
+Run AVERAGE([maf]) → scalar 842.x shown in yellow
+14
+Add 10 quick chip buttons above editor. Each runs pre-built query.
+Click "Leak Rate Today" → result appears instantly
+15
+Create Inspector.tsx with drag behaviour and localStorage persistence.
+Right-click gauge → Pin → Inspector appears with sparkline
+16
+Add alert threshold to Inspector: input → amber/red visual when exceeded.
+Set MAP_boost alert 195 → scrub to 194 → red indicator
+17
+Create ZoneInspection.tsx full-screen overlay.
+Double-click Zone 2 → full-screen opens with 24h chart
+18
+Add probability scrubber to ThresholdPanel (drag bars → back-calculate).
+Drag Zone B bar to 70% → MAP_boost input updates
+19
+3D viewer: add flow canvas mouse listeners for drag-to-restrict.
+Drag boost pipe → MAP_boost value decreases in threshold panel
+20
+3D viewer: add heat map toggle with temperature colour-coding.
+Click HEAT MAP → engine body turns orange-red near exhaust
+21
+3D viewer: add isolate mode (click part → others go 8% opacity).
+Click DPF → all other parts fade
+22
+3D viewer: right-click context menu on 3D parts.
+Right-click turbo → menu with 5 options appears
+23
+3D viewer: DAX mini-console overlay with [D] key.
+Press D → mini console appears → run AVERAGE([maf]) → result
+24
+3D viewer: twin selector dropdown from DTG list.
+Change dropdown → sensor baselines update in viewer
+25
+End-to-end test: drag boost pipe → zone prob updates → click Check → DAX query result.
+Complete flow from drag to DAX result in < 2 seconds
+Section 6 — v3 Validation Checklist
+Run ALL of these before declaring v3 complete
+□ v1 + v2 features still work: POST /api/predict, /api/dtg/create, WebSocket, 3D viewer — all unchanged
+DAX ENGINE:
+  □ POST /api/dax/query with AVERAGEX(SensorReadings, [maf]) → scalar ~842 in < 50ms
+  □ POST /api/dax/query with FILTER(LeakEvents, [zone]="B") → table of Zone B events
+  □ POST /api/dax/query with CORR([maf],[map_boost]) → float between -1 and 1
+  □ POST /api/dax/validate with bad DAX → valid:false with descriptive error
+  □ GET /api/dax/suggestions?prefix=AV → returns AVERAGEX, AVERAGE in list
+  □ GET /api/dax/measures → 20 measures returned with formulas
+  □ Background refresh: DuckDB tables update 30s after new sensor reading written
+FRONTEND INTERACTIVITY:
+  □ DAX Console: Monaco editor loads, Ctrl+Enter runs query, result table renders
+  □ DAX Console: all 10 quick chip buttons produce results
+  □ Inspector: right-click MAF → pin → Inspector shows with 30s sparkline
+  □ Inspector: set alert at 195 kPa → scrub MAP_boost to 193 → red alert fires
+  □ Inspector: state survives page refresh (localStorage)
+  □ ZoneInspection: double-click Zone 2 → full-screen opens with sensor charts
+  □ ZoneInspection: DAX mini-console pre-loaded with Zone 2 query
+  □ ThresholdPanel: drag Zone B bar to 60% → MAP_boost input changes to ~192 kPa
+  □ SensorGauge: click+drag value → threshold panel live-updates zone probabilities
+  □ SensorGauge: Ctrl+Click → gauge freezes with red border
+  □ SensorGauge: hover → tooltip shows sparkline, residual, risk level
+3D VIEWER INTERACTIVITY:
+  □ Drag boost pipe → MAP_boost input decreases → Zone B probability bar rises
+  □ Release drag at 40% restriction → simLeak("B") triggered automatically
+  □ HEAT MAP button → engine body temperature colour-codes correctly (exhaust = red)
+  □ ISOLATE click on any part → 92% of other parts go semi-transparent
+  □ Right-click turbo → context menu: Inspect / Simulate Leak / Query DAX / Isolate
+  □ Hover boost pipe → tooltip: "BOOST PIPE — MAP_boost: 218 kPa — Residual: 0.0%"
+  □ Twin selector dropdown → switch twin → sensor baselines update everywhere
+  □ [D] key → DAX mini-console appears over canvas → query runs → result card shows
+INTEGRATION:
+  □ DAX query result in Console highlights matching zone in 3D viewer
+  □ Scrub gauge value → Inspector sparkline updates live → DAX query result changes
+  □ Zone Inspection chart updates in real-time from WebSocket while inspection is open
+LeakSense Twin v3 — DAX + Interactivity Update
+Additive update to v1 + v2 · Nothing removed · Everything enhanced · Algorithm404

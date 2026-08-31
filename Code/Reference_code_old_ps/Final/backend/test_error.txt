@@ -1,0 +1,13 @@
+C:\Users\MITHUN\Desktop\STUDIES\PROJECT\60.LeakSense_Twin - Digital Twin & Energy Field & ML Based Leak Detection and Localization in Engines\Development\Only testing\backend\main.py:336: DeprecationWarning: 
+        on_event is deprecated, use lifespan event handlers instead.
+
+        Read more about it in the
+        [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+        
+  @app.on_event("startup")
+INFO:     Started server process [6628]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     ('127.0.0.1', 57077) - "WebSocket /ws/demo" [accepted]
+INFO:     connection open

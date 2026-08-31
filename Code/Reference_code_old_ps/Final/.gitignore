@@ -1,0 +1,59 @@
+# Node
+node_modules/
+dist/
+dist-ssr/
+.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.eslintcache
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Models & Data
+# Note: In a real project you'd probably ignore these, but since this is
+# a local prototype we might want to keep some models depending on size.
+3d_models/
+frontend/public/models/c18.glb
+# backend/data/*.csv
+# backend/models/*.pth
+# backend/models/*.joblib
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+ml.md
+../Digitaltwin/
+
+

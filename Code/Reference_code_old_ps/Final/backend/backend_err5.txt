@@ -1,0 +1,423 @@
+INFO:     Started server process [31512]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     ('127.0.0.1', 61647) - "WebSocket /ws/demo" [accepted]
+INFO:     connection open
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 327, in jsonable_encoder
+    data = dict(obj)
+TypeError: 'numpy.int64' object is not iterable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 332, in jsonable_encoder
+    data = vars(obj)
+TypeError: vars() argument must have __dict__ attribute
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 419, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\uvicorn\middleware\proxy_headers.py", line 84, in __call__
+    return await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\cors.py", line 95, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\cors.py", line 153, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 121, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 107, in app
+    response = await f(request)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 448, in app
+    content = await serialize_response(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 303, in serialize_response
+    return jsonable_encoder(response_content)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 288, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 288, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 302, in jsonable_encoder
+    jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 288, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 335, in jsonable_encoder
+    raise ValueError(errors) from e
+ValueError: [TypeError("'numpy.int64' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 327, in jsonable_encoder
+    data = dict(obj)
+TypeError: 'numpy.int64' object is not iterable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 332, in jsonable_encoder
+    data = vars(obj)
+TypeError: vars() argument must have __dict__ attribute
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 419, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\uvicorn\middleware\proxy_headers.py", line 84, in __call__
+    return await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\cors.py", line 95, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\cors.py", line 153, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 121, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 107, in app
+    response = await f(request)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 448, in app
+    content = await serialize_response(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 303, in serialize_response
+    return jsonable_encoder(response_content)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 288, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 288, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 302, in jsonable_encoder
+    jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 288, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 335, in jsonable_encoder
+    raise ValueError(errors) from e
+ValueError: [TypeError("'numpy.int64' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+INFO:     connection closed
+INFO:     ('127.0.0.1', 56527) - "WebSocket /ws/demo" [accepted]
+INFO:     connection open
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 327, in jsonable_encoder
+    data = dict(obj)
+TypeError: 'numpy.int64' object is not iterable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 332, in jsonable_encoder
+    data = vars(obj)
+TypeError: vars() argument must have __dict__ attribute
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 419, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\uvicorn\middleware\proxy_headers.py", line 84, in __call__
+    return await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\cors.py", line 95, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\cors.py", line 153, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 121, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 107, in app
+    response = await f(request)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 448, in app
+    content = await serialize_response(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 303, in serialize_response
+    return jsonable_encoder(response_content)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 288, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 288, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 302, in jsonable_encoder
+    jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 288, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 335, in jsonable_encoder
+    raise ValueError(errors) from e
+ValueError: [TypeError("'numpy.int64' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 327, in jsonable_encoder
+    data = dict(obj)
+TypeError: 'numpy.int64' object is not iterable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 332, in jsonable_encoder
+    data = vars(obj)
+TypeError: vars() argument must have __dict__ attribute
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 419, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\uvicorn\middleware\proxy_headers.py", line 84, in __call__
+    return await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\cors.py", line 95, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\cors.py", line 153, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 121, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 107, in app
+    response = await f(request)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 448, in app
+    content = await serialize_response(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 303, in serialize_response
+    return jsonable_encoder(response_content)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 288, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 288, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 302, in jsonable_encoder
+    jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 288, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 335, in jsonable_encoder
+    raise ValueError(errors) from e
+ValueError: [TypeError("'numpy.int64' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 327, in jsonable_encoder
+    data = dict(obj)
+TypeError: 'numpy.int64' object is not iterable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 332, in jsonable_encoder
+    data = vars(obj)
+TypeError: vars() argument must have __dict__ attribute
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 419, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\uvicorn\middleware\proxy_headers.py", line 84, in __call__
+    return await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\cors.py", line 95, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\cors.py", line 153, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 121, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 107, in app
+    response = await f(request)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 448, in app
+    content = await serialize_response(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 303, in serialize_response
+    return jsonable_encoder(response_content)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 288, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 288, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 302, in jsonable_encoder
+    jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 288, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 335, in jsonable_encoder
+    raise ValueError(errors) from e
+ValueError: [TypeError("'numpy.int64' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 327, in jsonable_encoder
+    data = dict(obj)
+TypeError: 'numpy.int64' object is not iterable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 332, in jsonable_encoder
+    data = vars(obj)
+TypeError: vars() argument must have __dict__ attribute
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 419, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\uvicorn\middleware\proxy_headers.py", line 84, in __call__
+    return await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\cors.py", line 95, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\cors.py", line 153, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 121, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 107, in app
+    response = await f(request)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 448, in app
+    content = await serialize_response(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\routing.py", line 303, in serialize_response
+    return jsonable_encoder(response_content)
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 288, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 288, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 302, in jsonable_encoder
+    jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 288, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+  File "C:\Users\MITHUN\AppData\Local\Programs\Python\Python310\lib\site-packages\fastapi\encoders.py", line 335, in jsonable_encoder
+    raise ValueError(errors) from e
+ValueError: [TypeError("'numpy.int64' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]

@@ -1,0 +1,17 @@
+
+[INIT] Starting LeakSense Twin API...
+  [OK] Digital twins loaded
+  [OK] Energy field detector loaded
+  [OK] Neural networks loaded
+  [OK] Ensemble loaded
+  [OK] All models loaded successfully!
+[READY] LeakSense Twin API ready!
+
+INFO:     127.0.0.1:55140 - "POST /api/dax/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55140 - "POST /api/dax/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55140 - "POST /api/dax/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55140 - "POST /api/dax/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55140 - "POST /api/dax/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55140 - "POST /api/dax/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57099 - "POST /api/dax/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53725 - "POST /api/dax/query HTTP/1.1" 200 OK

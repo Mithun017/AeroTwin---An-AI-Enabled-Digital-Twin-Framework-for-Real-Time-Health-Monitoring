@@ -1,13 +1,13 @@
-// App.jsx — Multi-page Navigation with Permanent Left Sidebar
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+// App.jsx — Multi-page Navigation with 5 Consolidated Views & AI Copilot Widget
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useTelemetrySocket } from './hooks/useTelemetrySocket'
 import { useReplay } from './hooks/useReplay'
 import { useTelemetryStore } from './state/telemetryStore'
 
 import Sidebar       from './components/Sidebar'
+import ChatBot       from './components/ChatBot'
 import DashboardPage from './pages/DashboardPage'
 import Twin3DPage    from './pages/Twin3DPage'
-import AlertsPage    from './pages/AlertsPage'
 import AnalyticsPage from './pages/AnalyticsPage'
 import HistoryPage   from './pages/HistoryPage'
 import SimulatorPage from './pages/SimulatorPage'
@@ -43,13 +43,13 @@ function MainLayout() {
       background: '#0a0e1a',
       overflow: 'hidden',
     }}>
-      {/* Permanent Left Sidebar */}
+      {/* Permanent Left Navigation Sidebar */}
       <Sidebar />
 
-      {/* Main Content Area (Header + Route Page) */}
+      {/* Main Viewport Header + Pages */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, height: '100%', overflow: 'hidden' }}>
         
-        {/* TOP APPLICATION HEADER */}
+        {/* Top Header */}
         <header style={{
           height: 56, flexShrink: 0,
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -63,7 +63,6 @@ function MainLayout() {
             <span style={{ fontSize: 11, color: '#64748b' }}>SIH 2026 PS-26054</span>
           </div>
 
-          {/* Status Indicators */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             {missionId && (
               <span style={{ fontSize: 10, color: '#64748b', fontFamily: 'JetBrains Mono, monospace' }}>
@@ -74,18 +73,20 @@ function MainLayout() {
           </div>
         </header>
 
-        {/* ROUTE VIEWPORT */}
+        {/* Dynamic Route Pages (Exactly 5 Options) */}
         <main style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
           <Routes>
             <Route path="/"          element={<DashboardPage />} />
             <Route path="/twin"      element={<Twin3DPage />} />
-            <Route path="/alerts"    element={<AlertsPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
             <Route path="/history"   element={<HistoryPage />} />
             <Route path="/simulator" element={<SimulatorPage />} />
           </Routes>
         </main>
       </div>
+
+      {/* Floating AI Engine Copilot Widget */}
+      <ChatBot />
     </div>
   )
 }

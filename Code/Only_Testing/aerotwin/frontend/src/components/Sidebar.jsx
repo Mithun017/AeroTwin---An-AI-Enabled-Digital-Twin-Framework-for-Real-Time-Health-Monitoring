@@ -1,17 +1,16 @@
-// Sidebar.jsx — Permanent Left Navigation Sidebar with Professional SVG Icons
+// Sidebar.jsx — Permanent Left Navigation Sidebar (5 Consolidated Options)
 import { NavLink } from 'react-router-dom'
 import { useTelemetryStore } from '../state/telemetryStore'
 import {
-  GaugeIcon, CubeIcon, ShieldAlertIcon, BrainIcon, HistoryIcon, CompassIcon
+  GaugeIcon, CubeIcon, BrainIcon, HistoryIcon, CompassIcon
 } from './Icons'
 
 const NAV_ITEMS = [
-  { path: '/',           label: 'Live Telemetry',     icon: GaugeIcon,       desc: 'Section B Sensors & Residuals' },
-  { path: '/twin',       label: '3D Digital Twin',    icon: CubeIcon,        desc: '3D Engine & Part Inspection' },
-  { path: '/alerts',     label: 'Alerts & Advisories',icon: ShieldAlertIcon, desc: 'Fault Feed & XAI Advisory' },
-  { path: '/analytics',  label: 'AI / ML Diagnostics',icon: BrainIcon,       desc: 'Isolation Forest & Anomaly Timeline' },
-  { path: '/history',    label: 'Mission Replay',     icon: HistoryIcon,     desc: 'Stored Mission Logs & Playback' },
-  { path: '/simulator',  label: 'What-If Simulator',  icon: CompassIcon,     desc: 'Pre-flight Environmental Simulation' },
+  { path: '/',           label: 'Live Telemetry',        icon: GaugeIcon,   desc: 'Section B Sensors & Residuals' },
+  { path: '/twin',       label: '3D Twin & Sub-Systems', icon: CubeIcon,    desc: 'Interactive Engine & 6 Sub-Systems' },
+  { path: '/analytics',  label: 'Alerts & AI Diagnostics',icon: BrainIcon,   desc: 'Fault Feed, XAI & Anomaly Timeline' },
+  { path: '/history',    label: 'Mission Logs & Replay', icon: HistoryIcon, desc: 'Playback Scrubber & CAN Bus Stream' },
+  { path: '/simulator',  label: 'What-If Simulator',     icon: CompassIcon, desc: 'Pre-flight Environmental Simulation' },
 ]
 
 export default function Sidebar({ isOpen, onClose }) {
@@ -54,7 +53,7 @@ export default function Sidebar({ isOpen, onClose }) {
         </div>
 
         {/* Navigation Options */}
-        <nav style={{ flex: 1, padding: '14px 10px', display: 'flex', flexDirection: 'column', gap: 4, overflowY: 'auto' }}>
+        <nav style={{ flex: 1, padding: '16px 10px', display: 'flex', flexDirection: 'column', gap: 6, overflowY: 'auto' }}>
           <div style={{ fontSize: 10, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', padding: '4px 10px', marginBottom: 4 }}>
             System Navigation
           </div>
@@ -67,7 +66,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 to={item.path}
                 style={({ isActive }) => ({
                   display: 'flex', alignItems: 'center', gap: 10,
-                  padding: '10px 12px', borderRadius: 8,
+                  padding: '11px 12px', borderRadius: 8,
                   textDecoration: 'none',
                   background: isActive ? 'linear-gradient(90deg, #1e293b, #1e3a8a30)' : 'transparent',
                   borderLeft: isActive ? '3px solid #38bdf8' : '3px solid transparent',
@@ -78,7 +77,7 @@ export default function Sidebar({ isOpen, onClose }) {
               >
                 <IconComponent size={18} color="currentColor" />
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 12, lineHeight: 1.2 }}>{item.label}</div>
+                  <div style={{ fontSize: 13, lineHeight: 1.2 }}>{item.label}</div>
                   <div style={{ fontSize: 10, color: '#64748b', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {item.desc}
                   </div>

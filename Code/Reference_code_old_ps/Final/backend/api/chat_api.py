@@ -1,5 +1,5 @@
 """
-LeakSense Twin — AI Chat Advisor API
+AeroTwin — AI Chat Advisor API
 Uses a local Ollama LLM (qwen3:4b) for private, secure engine diagnostics.
 Falls back to a rule-based knowledge base if Ollama is unavailable.
 """
@@ -15,7 +15,7 @@ router = APIRouter(prefix="/api/chat", tags=["Chat Advisor"])
 # ── Built-in Fallback Knowledge Base ─────────────────────────────────────────
 FALLBACK_KB = {
     "leak": (
-        "A leak in the Cat C18 engine is detected by comparing actual sensor readings "
+        "A leak or fault in the Aero Piston engine is detected by comparing actual sensor readings "
         "against the digital twin's predicted healthy values. Large residuals (actual − predicted) "
         "in MAF, MAP_boost, T_cac_out, T_exh, or dP_dpf indicate a potential leak. "
         "The Energy Field correlation matrix further confirms by showing distorted "
@@ -36,7 +36,7 @@ FALLBACK_KB = {
         "T_exh_manifold, T_dpf_in, T_dpf_out (all °C), and fuel_qty (mg/stroke)."
     ),
     "accuracy": (
-        "LeakSense Twin achieves: Binary Detection F1=0.886, Precision=0.90, Recall=0.87. "
+        "AeroTwin achieves: Binary Detection F1=0.886, Precision=0.90, Recall=0.87. "
         "Zone localization Top-1 Accuracy=95.6%. Inference latency <10ms, end-to-end <500ms."
     ),
     "twin": (
@@ -57,7 +57,7 @@ FALLBACK_KB = {
         "GO = engine healthy, NO-GO = confirmed leak detected."
     ),
     "default": (
-        "I am the LeakSense Twin AI Advisor for Cat C18 diesel engine diagnostics. "
+        "I am the AeroTwin AI Advisor for MALE UAV aero piston engine diagnostics. "
         "I can answer questions about leak detection zones, sensor readings, digital twin models, "
         "energy field analysis, accuracy metrics, and recommended actions. "
         "Please try rephrasing your question or ask about a specific topic like 'zone 2 leak', "
@@ -211,8 +211,8 @@ async def ask_chatbot(request: Request, body: ChatRequest):
     project_context = retrieve_relevant_context(body.message)
 
     system_prompt = (
-        "You are the LeakSense Twin AI Advisor — a specialized expert in "
-        "Cat C18 diesel engine diagnostics and the LeakSense Twin AI leak detection system.\n"
+        "You are the AeroTwin AI Advisor — a specialized expert in "
+        "MALE UAV aero piston engine diagnostics and the AeroTwin AI health monitoring system.\n"
         "Your role is to help engineers understand engine health, interpret leak detection results, "
         "and explain the physics, ML models, and energy field analysis behind the system.\n\n"
         f"{project_context}"

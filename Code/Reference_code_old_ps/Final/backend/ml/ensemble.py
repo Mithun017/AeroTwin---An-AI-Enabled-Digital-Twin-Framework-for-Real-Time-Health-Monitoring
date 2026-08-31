@@ -1,5 +1,5 @@
 """
-LeakSense Twin — Ensemble Predictor
+AeroTwin — Ensemble Predictor
 Combines: LeakSenseNet + LeakLocalizationNet + XGBoost
 Weighted vote: NN:0.40, XGBoost:0.60
 """

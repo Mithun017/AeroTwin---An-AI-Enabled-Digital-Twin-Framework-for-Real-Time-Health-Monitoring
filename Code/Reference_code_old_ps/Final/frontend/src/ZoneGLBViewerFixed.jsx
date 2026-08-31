@@ -295,7 +295,7 @@ export default function ZoneGLBViewerFixed({ zoneId, height = 150 }) {
             animation: 'spin 0.8s linear infinite'
           }} />
           <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
-            Loading C18 Engine Model
+            Loading Aero Engine Model
           </div>
           {loadProgress > 0 && (
             <>

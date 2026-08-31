@@ -1,5 +1,5 @@
 """
-LeakSense Twin — Zone 3: Exhaust Digital Twin
+AeroTwin — Zone 3: Exhaust Digital Twin
 Physics: Energy balance — predicts exhaust temperatures and back-pressure.
 """
 

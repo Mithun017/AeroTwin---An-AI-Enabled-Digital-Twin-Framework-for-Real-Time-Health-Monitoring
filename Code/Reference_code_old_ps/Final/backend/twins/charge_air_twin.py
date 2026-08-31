@@ -1,5 +1,5 @@
 """
-LeakSense Twin — Zone 2: Charge Air System Digital Twin
+AeroTwin — Zone 2: Charge Air System Digital Twin
 Physics: Turbocharger compressor map + CAC heat exchanger model.
 Predicts: MAP_boost, T_boost, T_cac_out, MAP_cac_out, MAP_intake
 """

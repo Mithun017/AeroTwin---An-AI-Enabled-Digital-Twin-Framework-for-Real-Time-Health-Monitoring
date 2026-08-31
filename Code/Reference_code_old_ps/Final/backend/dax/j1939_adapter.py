@@ -1,7 +1,7 @@
 """
-LeakSense Twin — SAE J1939 CAN Bus Ingestion Adapter
+AeroTwin — SAE J1939 CAN Bus Ingestion Adapter
 Decodes raw CAN frames from the engine test cell DAQ into physical values
-required by the LeakSense Twin digital twins and machine learning models.
+required by the AeroTwin digital twins and machine learning models.
 """
 
 from typing import Dict, Tuple, Optional, Any

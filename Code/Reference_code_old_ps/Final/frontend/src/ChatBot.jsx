@@ -6,7 +6,7 @@ export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false)
   const [message, setMessage] = useState('')
   const [chatHistory, setChatHistory] = useState([
-    { role: 'assistant', content: 'Hello! I am your LeakSense AI Advisor powered by local Ollama Qwen 3 4B. How can I help you with your Cat C18 diagnostics today?', source: 'system' }
+    { role: 'assistant', content: 'Hello! I am your AeroTwin AI Advisor powered by local Ollama Qwen 3 4B. How can I help you with your Aero Piston Engine diagnostics today?', source: 'system' }
   ])
   const [isLoading, setIsLoading] = useState(false)
   const [backendStatus, setBackendStatus] = useState('unknown') // 'online' | 'offline' | 'unknown'
@@ -92,7 +92,7 @@ export default function ChatBot() {
             <div className="chatbot-icon">🤖</div>
             <div>
               <h3>AI Advisor</h3>
-              <p>Ollama · Qwen 3 4B · Cat C18</p>
+              <p>Ollama · Qwen 3 4B · Aero Engine</p>
             </div>
           </div>
           <div className="chatbot-status">

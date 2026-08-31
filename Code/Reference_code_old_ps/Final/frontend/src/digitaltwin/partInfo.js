@@ -352,7 +352,7 @@ export function getPartInfo(meshName) {
   return {
     name: meshName,
     zone: 'structure',
-    desc: 'A component of the CAT C18 18.1 L inline-6 diesel engine. Rated to 563 kW (755 bhp) and 3 550 N·m peak torque at 1 400 rpm.',
-    specs: { 'Engine': 'CAT C18 ACERT', 'Displacement': '18.1 L', 'Config': 'Inline-6', 'Bore × Stroke': '145 × 183 mm' },
+    desc: 'A component of the Aero Piston Engine for MALE UAVs. Designed for high mission reliability, real-time health monitoring, and altitude performance.',
+    specs: { 'Engine': 'Aero Piston Engine', 'Application': 'MALE UAV', 'Config': 'Turbocharged Aero Engine', 'Monitoring': 'AeroTwin Real-Time DT' },
   };
 }

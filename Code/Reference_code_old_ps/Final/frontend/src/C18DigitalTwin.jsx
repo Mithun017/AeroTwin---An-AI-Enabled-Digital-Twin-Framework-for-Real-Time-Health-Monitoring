@@ -292,7 +292,7 @@ export default function C18DigitalTwin() {
             animation: 'spin 1s linear infinite'
           }} />
           <div style={{ color: 'white', fontSize: '1.5rem', fontWeight: 'bold' }}>
-            Loading C18 Engine Model
+            Loading Aero Engine Model
           </div>
           <div style={{
             width: '400px',
@@ -379,7 +379,7 @@ export default function C18DigitalTwin() {
           minWidth: '250px'
         }}>
           <div style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '15px', color: '#06b6d4' }}>
-            CAT C18 Engine
+            Aero Piston Engine
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.9rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>

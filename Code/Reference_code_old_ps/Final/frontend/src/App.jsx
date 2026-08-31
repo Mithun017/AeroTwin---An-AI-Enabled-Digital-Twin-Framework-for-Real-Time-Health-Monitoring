@@ -371,8 +371,8 @@ function Sidebar({ isConnected, isCollapsed, onToggle }) {
             L
           </div>
           <div className="sidebar-logo-text">
-            <h1>LeakSense Twin</h1>
-            <span>Cat C18 Engine Diagnostics</span>
+            <h1>AeroTwin</h1>
+            <span>MALE UAV Aero Engine Diagnostics</span>
           </div>
         </div>
       </div>
@@ -401,7 +401,7 @@ function Sidebar({ isConnected, isCollapsed, onToggle }) {
           <span className="dot" style={{
             background: isConnected ? 'var(--accent-emerald)' : 'var(--accent-red)',
           }}></span>
-          <span>CAT C18 • ADEM A4</span>
+          <span>Aero Piston Engine • ADEM</span>
         </div>
       </div>
     </aside>
@@ -759,7 +759,7 @@ function EngineDiagram({ zoneIdx, leakDetected, onZoneClick }) {
   return (
     <div className="card engine-card">
       <div className="card-header">
-        <span className="card-title">Cat C18 Engine — Zone Map (Click to Simulate)</span>
+        <span className="card-title">Aero Piston Engine — Zone Map (Click to Simulate)</span>
         <span className="card-icon"></span>
       </div>
       <div className="engine-diagram-grid">
@@ -1252,7 +1252,7 @@ function UploadCheckPage({
     const csv = [headers, ...rows].map(r => r.join(',')).join('\n')
     const blob = new Blob([csv], { type: 'text/csv' })
     const url = URL.createObjectURL(blob)
-    const a = document.createElement('a'); a.href = url; a.download = 'leaksense_results.csv'; a.click()
+    const a = document.createElement('a'); a.href = url; a.download = 'aerotwin_results.csv'; a.click()
     URL.revokeObjectURL(url)
   }
 
@@ -1325,7 +1325,7 @@ function UploadCheckPage({
             <div style={{ display: 'flex', gap: '16px' }}>
               {[
                 { label: 'ML Models', val: '3 Active', color: 'var(--accent-emerald)', icon: <IconCpu size={22} color="var(--accent-emerald)" /> },
-                { label: 'Engine', val: 'Cat C18', color: 'var(--accent-cyan)', icon: <IconSettings size={22} color="var(--accent-cyan)" /> },
+                { label: 'Engine', val: 'Aero Engine', color: 'var(--accent-cyan)', icon: <IconSettings size={22} color="var(--accent-cyan)" /> },
                 { label: 'Protocol', val: 'J1939', color: 'var(--accent-yellow)', icon: <IconSignal size={22} color="var(--accent-yellow)" /> },
               ].map(s => (
                 <div key={s.label} style={{
@@ -1349,7 +1349,7 @@ function UploadCheckPage({
           {
             id: 'live', icon: <IconLive />, title: 'Live Stream', badge: 'REAL-TIME',
             badgeColor: 'var(--accent-emerald)', glowRgb: GLOW_COLORS.live,
-            desc: 'Stream sensor data at 1 Hz from the Cat C18 ECU via SAE J1939 WebSocket. Auto-injects controlled fault scenarios across all 6 zones with live energy field updates.',
+            desc: 'Stream sensor data at 1 Hz from the Aero Engine ECU via SAE J1939 WebSocket. Auto-injects controlled fault scenarios across all 6 zones with live energy field updates.',
             chips: ['WebSocket', '1 Hz', 'Auto-Cycle', 'J1939', 'Zero Setup'],
             action: () => { onStartLive() },
           },

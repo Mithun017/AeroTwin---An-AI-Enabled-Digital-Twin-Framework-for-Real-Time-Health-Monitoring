@@ -1,5 +1,60 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Component } from 'react';
 import Editor from '@monaco-editor/react';
+
+class SafeMonacoEditor extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.warn('Monaco Editor load error, falling back to textarea:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <textarea
+          value={this.props.value}
+          onChange={(e) => this.props.onChange(e.target.value)}
+          placeholder="Enter DAX or SQL query..."
+          style={{
+            width: '100%',
+            height: '100%',
+            background: 'var(--bg-primary, #090d16)',
+            color: 'var(--text-primary, #fff)',
+            border: 'none',
+            padding: '12px',
+            fontFamily: 'var(--font-mono, monospace)',
+            fontSize: '13px',
+            resize: 'none',
+            outline: 'none'
+          }}
+        />
+      );
+    }
+
+    return (
+      <Editor
+        height="100%"
+        defaultLanguage="sql"
+        theme={document.body.classList.contains('light-theme') ? "vs" : "vs-dark"}
+        value={this.props.value}
+        onChange={(val) => this.props.onChange(val || '')}
+        loading={
+          <div style={{ padding: '20px', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+            Loading Editor...
+          </div>
+        }
+        options={{ minimap: { enabled: false }, fontSize: 13 }}
+      />
+    );
+  }
+}
 
 const API_BASE = 'http://localhost:8000';
 const WS_BASE = 'ws://localhost:8000';
@@ -80,7 +135,8 @@ function ResultLineChart({ data, columns }) {
 
 // ─── Custom SVG Circular Gauge ──────────────────────────────────────
 function CircularGauge({ value, min, max, unit, title, color }) {
-  const pct = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100));
+  const safeValue = typeof value === 'number' && !isNaN(value) ? value : 0;
+  const pct = Math.min(100, Math.max(0, ((safeValue - min) / (max - min)) * 100));
   const radius = 42;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (pct / 100) * circumference;
@@ -105,7 +161,7 @@ function CircularGauge({ value, min, max, unit, title, color }) {
           position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
           fontSize: '0.95rem', fontWeight: '800', fontFamily: 'var(--font-mono)'
         }}>
-          {Math.round(value)}
+          {Math.round(safeValue)}
           <span style={{ fontSize: '0.55rem', color: 'var(--text-muted)', display: 'block', fontWeight: 'normal' }}>{unit}</span>
         </div>
       </div>
@@ -123,7 +179,7 @@ export default function DAXConsole() {
   // DAQ states
   const [daqStatus, setDaqStatus] = useState('Disconnected');
   const [connectionType, setConnectionType] = useState('Simulated DAQ Data');
-  const [deviceName, setDeviceName] = useState('Simulated C18 Telemetry');
+  const [deviceName, setDeviceName] = useState('Simulated Aero Engine Telemetry');
   const [samplingRate, setSamplingRate] = useState(1);
   const [packetsReceived, setPacketsReceived] = useState(0);
   const [sensorCount, setSensorCount] = useState(11);
@@ -152,17 +208,17 @@ export default function DAXConsole() {
     fetch(`${API_BASE}/api/dax/daq/status`)
       .then(res => res.json())
       .then(data => {
-        setDaqStatus(data.status);
-        setConnectionType(data.connection_type);
-        setDeviceName(data.device_name);
-        setSamplingRate(data.sampling_rate);
-        setPacketsReceived(data.packets_received);
-        setSensorCount(data.sensor_count);
+        setDaqStatus(data.status || 'Disconnected');
+        setConnectionType(data.connection_type || 'Simulated DAQ Data');
+        setDeviceName(data.device_name || 'Simulated Aero Engine Telemetry');
+        setSamplingRate(data.sampling_rate || 1);
+        setPacketsReceived(data.packets_received || 0);
+        setSensorCount(data.sensor_count || 11);
         setLastUpdate(data.last_update || '-');
-        setSimulationState(data.simulation_state);
-        setRecording(data.recording);
-        setRecordedCount(data.recorded_count);
-        setAiPrediction(data.ai_prediction);
+        setSimulationState(data.simulation_state || 'Healthy');
+        setRecording(Boolean(data.recording));
+        setRecordedCount(data.recorded_count || 0);
+        if (data.ai_prediction) setAiPrediction(data.ai_prediction);
       })
       .catch(err => console.error('Error fetching DAQ status:', err));
 
@@ -201,13 +257,13 @@ export default function DAXConsole() {
     ws.onmessage = (e) => {
       const msg = JSON.parse(e.data);
       if (msg.type === 'daq_packet') {
-        setDaqStatus(msg.status);
-        setPacketsReceived(msg.packets_received);
-        setLastUpdate(msg.last_update);
-        setRecording(msg.recording);
-        setRecordedCount(msg.recorded_count);
-        setLatestPacket(msg.packet);
-        setAiPrediction(msg.ai_prediction);
+        if (msg.status) setDaqStatus(msg.status);
+        if (msg.packets_received !== undefined) setPacketsReceived(msg.packets_received);
+        if (msg.last_update) setLastUpdate(msg.last_update);
+        if (msg.recording !== undefined) setRecording(Boolean(msg.recording));
+        if (msg.recorded_count !== undefined) setRecordedCount(msg.recorded_count);
+        if (msg.packet) setLatestPacket(msg.packet);
+        if (msg.ai_prediction) setAiPrediction(msg.ai_prediction);
 
         // If recording is active, add to local buffer
         if (msg.recording) {
@@ -308,7 +364,7 @@ export default function DAXConsole() {
     }
 
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-    const filename = `LeakSense_Telemetry_${timestamp}.${format}`;
+    const filename = `AeroTwin_Telemetry_${timestamp}.${format}`;
 
     if (format === 'csv') {
       // Generate CSV
@@ -341,8 +397,8 @@ export default function DAXConsole() {
         metadata: {
           export_time: new Date().toISOString(),
           total_packets: telemetryBuffer.length,
-          engine: 'Cat C18',
-          system: 'LeakSense Twin DAQ'
+          engine: 'Aero Engine',
+          system: 'AeroTwin DAQ'
         },
         telemetry: telemetryBuffer
       }, null, 2);
@@ -474,7 +530,7 @@ export default function DAXConsole() {
             <div>Packets: <strong>{packetsReceived}</strong></div>
             <div>Sensors: <strong>{sensorCount} ch</strong></div>
             <div>Sync Clock: <strong>{lastUpdate}</strong></div>
-            <div>Mode: <strong style={{ color: 'var(--accent-yellow)' }}>{simulationState.toUpperCase()}</strong></div>
+            <div>Mode: <strong style={{ color: 'var(--accent-yellow)' }}>{(simulationState || 'Healthy').toUpperCase()}</strong></div>
           </div>
         </div>
       </div>
@@ -505,7 +561,7 @@ export default function DAXConsole() {
                   />
                 </svg>
                 <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '1.2rem', fontWeight: '900', color: '#fff' }}>
-                  {aiPrediction.engine_health}%
+                  {(aiPrediction?.engine_health ?? 100)}%
                 </div>
               </div>
             </div>
@@ -518,7 +574,7 @@ export default function DAXConsole() {
                 { key: 'injector_failure', label: 'Injector Fault probability', color: 'var(--accent-purple)' },
                 { key: 'sensor_drift', label: 'Sensor Drift factor', color: 'var(--accent-cyan)' }
               ].map(item => {
-                const val = aiPrediction[item.key] || 0.0;
+                const val = (aiPrediction && aiPrediction[item.key]) || 0.0;
                 return (
                   <div key={item.key}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.68rem', color: 'var(--text-secondary)', marginBottom: '3px' }}>
@@ -706,13 +762,9 @@ export default function DAXConsole() {
         </div>
 
         <div style={{ border: '1px solid var(--border-color)', borderRadius: '8px', overflow: 'hidden', height: '180px' }}>
-          <Editor
-            height="100%"
-            defaultLanguage="sql"
-            theme={document.body.classList.contains('light-theme') ? "vs" : "vs-dark"}
+          <SafeMonacoEditor
             value={query}
             onChange={(val) => setQuery(val)}
-            options={{ minimap: { enabled: false }, fontSize: 13 }}
           />
         </div>
 

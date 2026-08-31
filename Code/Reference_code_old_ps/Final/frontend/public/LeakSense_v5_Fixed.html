@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>LeakSense Twin — Cat C18 ACERT 3D Digital Twin</title>
+  <title>AeroTwin — Aero Piston Engine 3D Digital Twin</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
@@ -1532,8 +1532,8 @@
 
   <!-- BOOT -->
   <div id="boot">
-    <div class="bl">LEAKSENSE TWIN</div>
-    <div class="bs">CAT® C18 ACERT DITA — 3D DIGITAL TWIN v4.1</div>
+    <div class="bl">AEROTWIN</div>
+    <div class="bs">MALE UAV AERO PISTON ENGINE — 3D DIGITAL TWIN v4.1</div>
     <div
       style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);text-align:center;line-height:2;letter-spacing:.1em">
       18.1L INLINE-6 · 597 kW · TWIN-TURBO DIESEL<br>BORE 145mm · STROKE 183mm · CR 16.3:1 · MEUI INJECTION</div>
@@ -1545,10 +1545,10 @@
 
   <!-- TOPBAR -->
   <div id="topbar">
-    <span class="tc">CAT</span>
+    <span class="tc">AERO</span>
     <div>
-      <div class="tt">LEAKSENSE TWIN</div>
-      <div class="ts">C18 ACERT DITA · 597kW · 18.1L · INLINE-6 · MEUI INJECTION</div>
+      <div class="tt">AEROTWIN</div>
+      <div class="ts">AERO PISTON ENGINE · TURBOCHARGED · INLINE-6 · DIRECT INJECTION</div>
     </div>
     <div class="sep"></div>
     <div class="mtabs">
@@ -1652,7 +1652,7 @@
       <div class="cr"><span class="cl">OPACITY</span><input type="range" min="10" max="100" value="100" class="cs"
           id="opac-sl" oninput="onOpacity(this.value)"><span class="cv" id="opac-v">100%</span></div>
 
-      <div class="sh">C18 Live Specs</div>
+      <div class="sh">Aero Engine Live Specs</div>
       <div class="sc">
         <table class="stbl">
           <tr>
@@ -1762,7 +1762,7 @@
         style="position:absolute;top:12px;left:50%;transform:translateX(-50%);width:44px;height:44px;z-index:8;pointer-events:none"
         width="44" height="44"></canvas>
       <div class="hud" id="htl">
-        <div>CAT® C18 ACERT <span class="hg">DITA</span></div>
+        <div>AERO PISTON <span class="hg">ENGINE</span></div>
         <div>18.1L · IN-6 · 597kW</div>
         <div>BORE/STK: <span class="hg">145×183mm</span></div>
         <div>CR: <span class="hg">16.3:1</span></div>
@@ -1785,7 +1785,7 @@
         <div>STEADY STATE: <span class="ht">LOCKED</span></div>
       </div>
       <div id="engname">
-        <div class="ent">CAT C18 ACERT DITA</div>
+        <div class="ent">AERO PISTON ENGINE</div>
         <div class="ens">18.1L INLINE-6 · 597kW · TWIN-TURBO DIESEL</div>
       </div>
       <div id="mso">
@@ -1863,7 +1863,7 @@
     // ═══════════════════════════════════════════════
     // BOOT SEQUENCE
     // ═══════════════════════════════════════════════
-    const BOOT_MSGS = ['Initializing WebGL renderer...', 'Loading Cat C18 geometry...', 'Calibrating digital twin zones...', 'Computing energy field baseline...', 'Validating physics model...', 'System ready.'];
+    const BOOT_MSGS = ['Initializing WebGL renderer...', 'Loading Aero Engine geometry...', 'Calibrating digital twin zones...', 'Computing energy field baseline...', 'Validating physics model...', 'System ready.'];
     let bi = 0, bp = 0;
     const bpEl = document.getElementById('bp'), bmEl = document.getElementById('bm');
     const bootT = setInterval(() => {

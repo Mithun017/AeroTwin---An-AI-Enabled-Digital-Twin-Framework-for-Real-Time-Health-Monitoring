@@ -15,7 +15,7 @@ export default function DigitalTwinViewer() {
           border: 'none',
           background: '#01030a'
         }}
-        title="LeakSense Twin — C18 Digital Twin"
+        title="AeroTwin — Aero Piston Engine Digital Twin"
       />
     </div>
   )

@@ -201,7 +201,7 @@ export default function ZoneGLBViewer({ zoneId, height = 150 }) {
             width: '24px', height: '24px', borderRadius: '50%', border: '2px solid rgba(255,255,255,0.1)',
             borderTopColor: 'var(--accent-yellow)', animation: 'spin 0.8s linear infinite'
           }} />
-          <div>Loading C18 Engine Model...</div>
+          <div>Loading Aero Engine Model...</div>
           {loadProgress > 0 && (
             <div style={{ fontSize: '0.75rem', color: 'var(--accent-cyan)', fontFamily: 'var(--font-mono)' }}>
               {loadProgress}% - Zone {zoneId}

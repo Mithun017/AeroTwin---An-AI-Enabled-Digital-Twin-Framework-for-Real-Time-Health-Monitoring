@@ -1,5 +1,5 @@
 """
-LeakSense Twin — Zone 1: Intake Digital Twin
+AeroTwin — Zone 1: Intake Digital Twin
 Physics: Mass continuity — predicts MAF from RPM + ambient conditions.
 If actual MAF < predicted MAF by threshold: Zone 1 leak detected.
 """

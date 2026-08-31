@@ -4,59 +4,9 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CAT C18 Digital Twin</title>
+    <title>AeroTwin Digital Twin</title>
     <script type="module" crossorigin src="./assets/index-D3S08MuA.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-BUYzRJDA.css">
-  </head>
-  <body>
-    <div id="app">
-      <canvas id="viewport"></canvas>
-
-      <div id="hud">
-        <div id="title">
-          <span class="brand">CAT</span> C18 &mdash; Digital Twin
-        </div>
-        <div id="stats"></div>
-        <div id="controls-hint">
-          MMB · Orbit &nbsp;|&nbsp; Shift+MMB · Pan &nbsp;|&nbsp; Scroll · Zoom<br>
-          Click any part to inspect &nbsp;|&nbsp; Esc to deselect
-        </div>
-      </div>
-
-      <div id="toolbar">
-        <div id="rotate-group">
-          <button id="rotate-left"  class="rot-btn" title="Rotate Left">&#8592;</button>
-          <button id="rotate-auto"  class="rot-btn active-off" title="Auto-Spin  [R]">&#8635;</button>
-          <button id="rotate-right" class="rot-btn" title="Rotate Right">&#8594;</button>
-        </div>
-
-        <div id="explode-group">
-          <label id="explode-label" for="explode-slider">Explode <span id="explode-value">0%</span></label>
-          <input type="range" id="explode-slider" min="0" max="100" value="0" step="1" disabled />
-        </div>
-      </div>
-
-      <!-- Info Panel — slides in from right on part click -->
-      <div id="info-panel">
-        <button id="info-close" title="Close [Esc]">&#10005;</button>
-        <div id="info-zone-badge"></div>
-        <h2 id="info-name"></h2>
-        <p id="info-desc"></p>
-        <table id="info-specs"><tbody></tbody></table>
-      </div>
-
-      <!-- Hover tooltip -->
-      <div id="hover-label"></div>
-
-      <div id="loading">
-        <div id="loading-inner">
-          <div class="loading-title">Loading C18 Engine Model</div>
-          <div class="progress-track">
-            <div class="progress-bar" id="progress-bar"></div>
-          </div>
-          <div class="loading-detail" id="loading-detail">0%</div>
-        </div>
-      </div>
     </div>
   </body>
 </html>

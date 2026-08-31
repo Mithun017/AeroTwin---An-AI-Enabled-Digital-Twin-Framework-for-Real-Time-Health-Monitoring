@@ -1,5 +1,5 @@
 """
-LeakSense Twin — FastAPI Backend Server
+AeroTwin — FastAPI Backend Server
 Unified API serving digital twin predictions, ML anomaly detection,
 energy field analysis, and AI diagnostic advisor.
 """
@@ -56,7 +56,7 @@ def _to_json_safe(obj):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global predictor
-    print("\n[INIT] Starting LeakSense Twin API...")
+    print("\n[INIT] Starting AeroTwin API...")
     predictor = UnifiedPredictor()
     app.state.predictor = predictor
 
@@ -94,16 +94,16 @@ async def lifespan(app: FastAPI):
             app.state.dax.refresh_tables(prediction_history)
 
     asyncio.create_task(refresh_dax_task())
-    print("[READY] LeakSense Twin API ready!\n")
+    print("[READY] AeroTwin API ready!\n")
     yield  # server is running
-    print("[SHUTDOWN] LeakSense Twin API shutting down.")
+    print("[SHUTDOWN] AeroTwin API shutting down.")
 
 
 # ─── App ──────────────────────────────────────────────────────────────────────
 app = FastAPI(
-    title="LeakSense Twin API",
+    title="AeroTwin API",
     version="1.0.0",
-    description="AI-powered leak detection & localization for Cat C18 diesel engines",
+    description="AI-powered real-time health monitoring & fault prediction for MALE UAV aero piston engines",
     lifespan=lifespan,
 )
 
@@ -790,12 +790,12 @@ class UnifiedPredictor:
         
         url = "https://formspree.io/f/mdaraavp"
         recipients = "mmithun1701@gmail.com, kungumapriyaamkp5@gmail.com"
-        subject = f"[LeakSense Twin Alert] Leak Detected in {result.get('suspected_zone', 'Engine')}"
+        subject = f"[AeroTwin Alert] Leak Detected in {result.get('suspected_zone', 'Engine')}"
         
         payload = {
             "_subject": subject,
             "Target Recipients": recipients,
-            "Engine Model": "Cat C18 Diesel Engine (ADEM A4)",
+            "Engine Model": "MALE UAV Aero Piston Engine",
             "Diagnostic Status": "LEAK DETECTED",
             "Suspected Zone": result.get("suspected_zone", "Unknown"),
             "Severity Level": result.get("severity", "UNKNOWN"),

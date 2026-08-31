@@ -1,0 +1,36 @@
+version: "3.9"
+
+# ──────────────────────────────────────────────────────────────────────────
+# AeroTwin — Docker Compose (FUTURE PRODUCTION DEPLOYMENT ONLY)
+#
+# THIS FILE IS NOT THE DEMO PATH.
+# For the live hackathon demo, use start.bat in the project root.
+#
+# Use this file when deploying to a Linux server / containerised environment
+# after the hackathon. Requires Docker + Docker Compose installed.
+# ──────────────────────────────────────────────────────────────────────────
+
+services:
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../backend/ml/model_cache:/app/ml/model_cache
+      - ../backend/db:/app/db
+    environment:
+      - TICK_RATE_HZ=5
+      - WS_PORT=8000
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    restart: unless-stopped

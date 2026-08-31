@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+/* ── AeroTwin Design System ───────────────────────────────────────────── */
+
+:root {
+  --color-bg:          #0a0e1a;
+  --color-surface:     #111827;
+  --color-surface-2:   #1c2333;
+  --color-border:      #1e2d45;
+  --color-accent:      #3b82f6;
+  --color-accent-glow: #3b82f640;
+
+  --color-healthy:  #22c55e;
+  --color-low:      #84cc16;
+  --color-medium:   #f59e0b;
+  --color-high:     #ef4444;
+  --color-critical: #dc2626;
+
+  --font-mono: 'JetBrains Mono', 'Fira Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root {
+  height: 100%;
+  background: var(--color-bg);
+  color: #e2e8f0;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-surface); }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+
+/* Severity colour utilities */
+.severity-normal   { color: var(--color-healthy); }
+.severity-low      { color: var(--color-low);     }
+.severity-medium   { color: var(--color-medium);  }
+.severity-high     { color: var(--color-high);    }
+.severity-critical { color: var(--color-critical); }
+
+.badge-severity {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 999px;
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+}
+.badge-normal   { background: #22c55e18; color: var(--color-healthy); }
+.badge-low      { background: #84cc1618; color: var(--color-low);     }
+.badge-medium   { background: #f59e0b18; color: var(--color-medium);  }
+.badge-high     { background: #ef444418; color: var(--color-high);    }
+.badge-critical { background: #dc262618; color: var(--color-critical); animation: pulse-critical 1s infinite; }
+
+@keyframes pulse-critical {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+/* Panel card */
+.panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 16px;
+}
+.panel-title {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: #64748b; margin-bottom: 12px;
+}
+
+/* Placeholder state */
+.placeholder {
+  display: flex; align-items: center; justify-content: center;
+  height: 80px; color: #475569; font-size: 12px; font-style: italic;
+}

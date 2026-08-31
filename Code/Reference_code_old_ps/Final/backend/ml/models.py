@@ -1,5 +1,5 @@
 """
-LeakSense Twin — Neural Network Models
+AeroTwin — Neural Network Models
 Implements:
   1. LeakSenseNet: Binary leak detection (ReLU-Sigmoid-Cosine architecture)
   2. LeakLocalizationNet: Multi-class zone classification

@@ -1,5 +1,5 @@
 """
-LeakSense Twin — Energy Field Detector
+AeroTwin — Energy Field Detector
 Computes inter-sensor correlation manifold and detects distortions indicating leaks.
 """
 

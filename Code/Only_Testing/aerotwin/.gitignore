@@ -1,0 +1,32 @@
+# aerotwin — Python backend gitignore
+
+# Model cache — binary .pkl files, rebuilt on first run
+backend/ml/model_cache/*.pkl
+backend/ml/model_cache/config_hash.txt
+
+# Database
+backend/db/*.db
+backend/db/*.db-wal
+backend/db/*.db-shm
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Node / frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+# Logs / temp
+*.log
+*.txt.bak

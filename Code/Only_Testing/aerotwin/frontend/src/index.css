@@ -1,14 +1,15 @@
 @import "tailwindcss";
 
-/* ── AeroTwin Design System ───────────────────────────────────────────── */
+/* ── AeroTwin Modern Glassmorphism & Soft-Curved Design System ────────── */
 
 :root {
-  --color-bg:          #0a0e1a;
-  --color-surface:     #111827;
-  --color-surface-2:   #1c2333;
-  --color-border:      #1e2d45;
-  --color-accent:      #3b82f6;
-  --color-accent-glow: #3b82f640;
+  --color-bg:          #070b14;
+  --color-surface:     rgba(15, 23, 42, 0.75);
+  --color-surface-solid:#0f172a;
+  --color-border:      rgba(255, 255, 255, 0.08);
+  --color-border-glow: rgba(56, 189, 248, 0.25);
+  --color-accent:      #38bdf8;
+  --color-accent-glow: rgba(56, 189, 248, 0.35);
 
   --color-healthy:  #22c55e;
   --color-low:      #84cc16;
@@ -23,54 +24,54 @@
 
 html, body, #root {
   height: 100%;
-  background: var(--color-bg);
-  color: #e2e8f0;
-  font-family: 'Inter', system-ui, sans-serif;
+  width: 100%;
+  background: radial-gradient(circle at 50% 0%, #0d1527 0%, #070b14 100%);
+  color: #f8fafc;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   font-size: 14px;
+  overflow: hidden;
 }
 
-/* Scrollbars */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--color-surface); }
-::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+/* Custom Smooth Scrollbars */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.4); }
+::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.6); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(56, 189, 248, 0.5); }
 
-/* Severity colour utilities */
-.severity-normal   { color: var(--color-healthy); }
-.severity-low      { color: var(--color-low);     }
-.severity-medium   { color: var(--color-medium);  }
-.severity-high     { color: var(--color-high);    }
-.severity-critical { color: var(--color-critical); }
-
-.badge-severity {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 2px 8px; border-radius: 999px;
-  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
-}
-.badge-normal   { background: #22c55e18; color: var(--color-healthy); }
-.badge-low      { background: #84cc1618; color: var(--color-low);     }
-.badge-medium   { background: #f59e0b18; color: var(--color-medium);  }
-.badge-high     { background: #ef444418; color: var(--color-high);    }
-.badge-critical { background: #dc262618; color: var(--color-critical); animation: pulse-critical 1s infinite; }
-
-@keyframes pulse-critical {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.6; }
+/* Glassmorphism Panel Utility */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s;
 }
 
-/* Panel card */
-.panel {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 16px;
-}
-.panel-title {
-  font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
-  text-transform: uppercase; color: #64748b; margin-bottom: 12px;
+.glass-panel:hover {
+  border-color: rgba(56, 189, 248, 0.25);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5), 0 0 20px 0 rgba(56, 189, 248, 0.1);
 }
 
-/* Placeholder state */
-.placeholder {
-  display: flex; align-items: center; justify-content: center;
-  height: 80px; color: #475569; font-size: 12px; font-style: italic;
+.glass-pill {
+  border-radius: 9999px;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Mobile Responsive Grid Classes */
+@media (max-width: 960px) {
+  .responsive-grid-dashboard {
+    grid-template-columns: 1fr !important;
+    overflow-y: auto !important;
+  }
+  .responsive-grid-3d {
+    grid-template-columns: 1fr !important;
+    overflow-y: auto !important;
+  }
+  .responsive-grid-2col {
+    grid-template-columns: 1fr !important;
+    overflow-y: auto !important;
+  }
 }

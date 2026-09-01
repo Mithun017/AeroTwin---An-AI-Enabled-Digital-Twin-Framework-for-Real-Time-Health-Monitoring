@@ -1,4 +1,4 @@
-// Twin3DPage.jsx — 3D Twin Viewer & 6 Sub-Systems Health Matrix
+// Twin3DPage.jsx — Glassmorphism 3D Twin & 6 Sub-Systems Health Matrix
 import { useState, Suspense } from 'react'
 import EngineScene from '../three/EngineScene'
 import SubsystemsPage from './SubsystemsPage'
@@ -14,22 +14,23 @@ const ENGINE_PARTS = [
 ]
 
 export default function Twin3DPage() {
-  const { sensors, mlOutput, severity, healthIndex } = useTelemetryStore()
+  const { sensors, severity, healthIndex } = useTelemetryStore()
   const [selectedPart, setSelectedPart] = useState(ENGINE_PARTS[1])
-  const [activeTab, setActiveTab] = useState('twin') // 'twin' | 'subsystems'
+  const [activeTab, setActiveTab] = useState('twin')
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: 12, height: '100%', overflow: 'hidden' }}>
-      {/* View Switcher Header Tab */}
-      <div style={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: 12, padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14, padding: 16, height: '100%', overflow: 'hidden' }}>
+      {/* Header Tab Switcher */}
+      <div className="glass-panel" style={{ padding: '12px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: 16 }}>
         <div style={{ display: 'flex', gap: 8 }}>
           <button
             onClick={() => setActiveTab('twin')}
             style={{
-              padding: '8px 16px', borderRadius: 8, border: 'none',
-              background: activeTab === 'twin' ? '#38bdf8' : '#1e293b',
-              color: activeTab === 'twin' ? '#0f172a' : '#94a3b8',
-              fontWeight: 700, fontSize: 12, cursor: 'pointer', transition: 'all 0.15s',
+              padding: '8px 18px', borderRadius: 9999, border: 'none',
+              background: activeTab === 'twin' ? 'linear-gradient(135deg, #0284c7, #2563eb)' : 'rgba(255, 255, 255, 0.05)',
+              color: activeTab === 'twin' ? '#fff' : '#94a3b8',
+              fontWeight: 700, fontSize: 12, cursor: 'pointer', transition: 'all 0.2s',
+              boxShadow: activeTab === 'twin' ? '0 4px 14px rgba(56, 189, 248, 0.3)' : 'none',
             }}
           >
             3D Digital Twin Viewer
@@ -37,27 +38,28 @@ export default function Twin3DPage() {
           <button
             onClick={() => setActiveTab('subsystems')}
             style={{
-              padding: '8px 16px', borderRadius: 8, border: 'none',
-              background: activeTab === 'subsystems' ? '#38bdf8' : '#1e293b',
-              color: activeTab === 'subsystems' ? '#0f172a' : '#94a3b8',
-              fontWeight: 700, fontSize: 12, cursor: 'pointer', transition: 'all 0.15s',
+              padding: '8px 18px', borderRadius: 9999, border: 'none',
+              background: activeTab === 'subsystems' ? 'linear-gradient(135deg, #0284c7, #2563eb)' : 'rgba(255, 255, 255, 0.05)',
+              color: activeTab === 'subsystems' ? '#fff' : '#94a3b8',
+              fontWeight: 700, fontSize: 12, cursor: 'pointer', transition: 'all 0.2s',
+              boxShadow: activeTab === 'subsystems' ? '0 4px 14px rgba(56, 189, 248, 0.3)' : 'none',
             }}
           >
             6 Engine Sub-Systems Health Matrix
           </button>
         </div>
 
-        <div style={{ fontSize: 11, color: '#64748b' }}>
-          Engine Health: <span style={{ fontWeight: 700, color: healthIndex > 0.75 ? '#22c55e' : '#f59e0b' }}>{(healthIndex * 100).toFixed(0)}% ({severity.toUpperCase()})</span>
+        <div style={{ fontSize: 12, color: '#94a3b8' }}>
+          Engine Health: <span style={{ fontWeight: 800, color: healthIndex > 0.75 ? '#22c55e' : '#f59e0b' }}>{(healthIndex * 100).toFixed(0)}% ({severity.toUpperCase()})</span>
         </div>
       </div>
 
       {/* Tab Content */}
       <div style={{ flex: 1, overflow: 'hidden' }}>
         {activeTab === 'twin' ? (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 12, height: '100%', overflow: 'hidden' }}>
+          <div className="responsive-grid-3d" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 14, height: '100%', overflow: 'hidden' }}>
             {/* 3D CANVAS VIEWPORT */}
-            <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', border: '1px solid #1e293b', background: '#090d16' }}>
+            <div className="glass-panel" style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', background: '#070b14' }}>
               <Suspense fallback={<div style={{ padding: 20, color: '#38bdf8' }}>Loading 3D Twin...</div>}>
                 <EngineScene />
               </Suspense>
@@ -65,9 +67,9 @@ export default function Twin3DPage() {
               {/* HUD Header */}
               <div style={{
                 position: 'absolute', top: 16, left: 16, zIndex: 10,
-                background: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(8px)',
-                border: '1px solid #334155', borderRadius: 10, padding: '10px 16px',
-                display: 'flex', alignItems: 'center', gap: 16,
+                background: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(16px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: 14, padding: '10px 18px',
+                display: 'flex', alignItems: 'center', gap: 18,
               }}>
                 <div>
                   <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700 }}>SPEED</div>
@@ -75,7 +77,7 @@ export default function Twin3DPage() {
                     {sensors?.rpm != null ? sensors.rpm.toFixed(0) : '—'} <span style={{ fontSize: 10, color: '#64748b' }}>RPM</span>
                   </div>
                 </div>
-                <div style={{ width: 1, height: 24, background: '#334155' }} />
+                <div style={{ width: 1, height: 24, background: 'rgba(255, 255, 255, 0.1)' }} />
                 <div>
                   <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700 }}>CHT TEMP</div>
                   <div style={{ fontSize: 18, fontWeight: 800, color: '#f59e0b', fontFamily: 'JetBrains Mono, monospace' }}>
@@ -86,23 +88,23 @@ export default function Twin3DPage() {
             </div>
 
             {/* RIGHT INSPECTION PANEL */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, overflowY: 'auto' }}>
-              <div style={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: 12, padding: 16 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#64748b', marginBottom: 12 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, overflowY: 'auto' }}>
+              <div className="glass-panel" style={{ padding: 18 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#64748b', marginBottom: 14 }}>
                   Component Inspection
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {ENGINE_PARTS.map(part => (
                     <button
                       key={part.id}
                       onClick={() => setSelectedPart(part)}
                       style={{
-                        padding: '10px 12px', borderRadius: 8, textAlign: 'left',
-                        background: selectedPart.id === part.id ? '#1e293b' : 'transparent',
-                        border: `1px solid ${selectedPart.id === part.id ? '#38bdf8' : '#1e293b'}`,
+                        padding: '12px 14px', borderRadius: 12, textAlign: 'left',
+                        background: selectedPart.id === part.id ? 'rgba(56, 189, 248, 0.12)' : 'rgba(255, 255, 255, 0.02)',
+                        border: `1px solid ${selectedPart.id === part.id ? 'rgba(56, 189, 248, 0.35)' : 'rgba(255, 255, 255, 0.04)'}`,
                         color: selectedPart.id === part.id ? '#38bdf8' : '#94a3b8',
                         fontSize: 12, fontWeight: selectedPart.id === part.id ? 700 : 400,
-                        cursor: 'pointer', transition: 'all 0.15s',
+                        cursor: 'pointer', transition: 'all 0.2s',
                       }}
                     >
                       {part.name}
@@ -111,17 +113,17 @@ export default function Twin3DPage() {
                 </div>
               </div>
 
-              <div style={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: 12, padding: 16 }}>
+              <div className="glass-panel" style={{ padding: 18 }}>
                 <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#38bdf8', marginBottom: 8 }}>
                   Part Specification
                 </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: '#f8fafc', marginBottom: 4 }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: '#f8fafc', marginBottom: 4 }}>
                   {selectedPart.name}
                 </div>
-                <div style={{ fontSize: 11, color: '#64748b', marginBottom: 8 }}>
+                <div style={{ fontSize: 11, color: '#64748b', marginBottom: 10 }}>
                   Material: {selectedPart.mat}
                 </div>
-                <div style={{ padding: 8, background: '#1e293b', borderRadius: 6, fontSize: 11, color: '#22c55e', fontWeight: 700 }}>
+                <div style={{ padding: 10, background: 'rgba(34, 197, 94, 0.1)', borderRadius: 10, fontSize: 12, color: '#22c55e', fontWeight: 700, border: '1px solid rgba(34, 197, 94, 0.2)' }}>
                   Status: {selectedPart.status}
                 </div>
               </div>

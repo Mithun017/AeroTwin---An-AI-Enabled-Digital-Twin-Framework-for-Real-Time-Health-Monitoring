@@ -49,12 +49,12 @@ const SN = {
 };
 
 const LEAK_DEF = {
-  A: { zone: 1, sen: 'MAF', d: -0.15, lbl: 'Zone A — Airflow Meter → Compressor', act: 'Inspect MAF piping and housing seal. Check hose clamp torque (12 Nm). Verify no cracks in flex coupling.' },
-  B: { zone: 2, sen: 'MAP_boost', d: -0.17, lbl: 'Zone B — Compressor Outlet / Pre-CAC', act: 'Inspect turbocharger outlet V-band clamp (68 Nm). Check boost pipe weld seam near elbow radius.' },
-  C: { zone: 2, sen: 'MAP_cac', d: -0.14, lbl: 'Zone C — CAC Outlet → Intake Manifold', act: 'Inspect CAC outlet silicone hose and spring clamps. Check intercooler end-tank welds.' },
-  D: { zone: 3, sen: 'T_exh_man', d: -0.12, lbl: 'Zone D — Exhaust Manifold Gasket', act: 'Inspect exhaust manifold gaskets cyl 3-4. Check stud torque (65 Nm). Look for carbon tracking.' },
-  E: { zone: 3, sen: 'dP_dpf', d: -0.23, lbl: 'Zone E — DPF/SCR Aftertreatment', act: 'Inspect DPF inlet/outlet flange gaskets. Check SCR inlet flex joint. Verify DEF injector nozzle seal.' },
-  F: { zone: 4, sen: 'MAP_boost', d: -0.05, lbl: '⚠ FUEL RAIL LEAK — CRITICAL', act: 'STOP ENGINE IMMEDIATELY. Fuel rail leak — FIRE HAZARD. Inspect rail o-rings and MEUI injector seals.' },
+  A: { zone: 1, sen: 'MAF', d: -0.15, lbl: 'Zone 1 — Air Intake & MAF Sensor Drift', act: 'Inspect MAF sensor connector, intake filter element, and ducting. Recalibrate intake air-density model.' },
+  B: { zone: 2, sen: 'MAP_boost', d: -0.17, lbl: 'Zone 2 — Turbo Compressor Boost Pressure Loss', act: 'Inspect turbocharger compressor housing, V-band clamp, and boost ducting. Check compressor wheel tip clearance.' },
+  C: { zone: 2, sen: 'MAP_cac', d: -0.14, lbl: 'Zone 2 — Intercooler (CAC) Thermal Inefficiency', act: 'Inspect CAC heat exchanger core. Check for cooling fin blockage, thermal heat soak, or end-tank pressure loss.' },
+  D: { zone: 3, sen: 'T_exh_man', d: -0.12, lbl: 'Zone 3 — Exhaust Manifold Thermal Blowby', act: 'Inspect cylinder exhaust manifold gasket interfaces. Check stud torque (65 Nm) and monitor EGT cylinder imbalance.' },
+  E: { zone: 3, sen: 'dP_dpf', d: -0.23, lbl: 'Zone 3 — Wastegate Actuator Drift & Turbine ΔP', act: 'Inspect pneumatic wastegate actuator linkage and turbine bypass valve. Check for actuator diaphragm fatigue or carbon binding.' },
+  F: { zone: 4, sen: 'MAP_boost', d: -0.05, lbl: '⚠ CRITICAL FAULT — Fuel Rail Pressure Loss', act: 'CRITICAL SAFETY ALERT: Fuel rail pressure loss detected — Fire/starvation risk. Inspect dual-lane HP pump and injector seals.' },
 };
 
 // Auto-calibrated leak positions (fallback values)

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AeroTwin — Aero Piston Engine 3D Digital Twin</title>
+  <title>AeroTwin — Aero Piston Engine 3D Digital Twin | Real-Time Health Monitoring</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
@@ -1533,14 +1533,14 @@
   <!-- BOOT -->
   <div id="boot">
     <div class="bl">AEROTWIN</div>
-    <div class="bs">MALE UAV AERO PISTON ENGINE — 3D DIGITAL TWIN v4.1</div>
+    <div class="bs">MALE UAV AERO PISTON ENGINE — AI DIGITAL TWIN HEALTH MONITOR v4.1</div>
     <div
       style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);text-align:center;line-height:2;letter-spacing:.1em">
-      18.1L INLINE-6 · 597 kW · TWIN-TURBO DIESEL<br>BORE 145mm · STROKE 183mm · CR 16.3:1 · MEUI INJECTION</div>
+      ROTAX 915 iS · 1.35L 4-CYL BOXER · 104 kW (141 HP) · TURBOCHARGED & INTERCOOLED<br>BORE 84mm · STROKE 61mm · CR 8.2:1 · REDUCTION i=2.43 · DUAL-LANE FADEC EFI</div>
     <div class="bb">
       <div class="bp" id="bp"></div>
     </div>
-    <div class="bm" id="bm">Initializing physics engine...</div>
+    <div class="bm" id="bm">Initializing physics engine & residual health twin...</div>
   </div>
 
   <!-- TOPBAR -->
@@ -1548,7 +1548,7 @@
     <span class="tc">AERO</span>
     <div>
       <div class="tt">AEROTWIN</div>
-      <div class="ts">AERO PISTON ENGINE · TURBOCHARGED · INLINE-6 · DIRECT INJECTION</div>
+      <div class="ts">ROTAX 915 iS · 4-CYL BOXER · TURBOCHARGED & INTERCOOLED · DUAL-LANE FADEC EFI</div>
     </div>
     <div class="sep"></div>
     <div class="mtabs">
@@ -1560,8 +1560,8 @@
     <div class="sep"></div>
     <div class="tbtns">
       <button class="tbtn tbtn-xp" id="btn-xp" onclick="toggleExplode()">⬡ EXPLODE</button>
-      <button class="tbtn tbtn-demo" id="btn-demo" onclick="toggleDemo()">▶ AUTO DEMO</button>
-      <button class="tbtn tbtn-clr" onclick="clearLeak()">✕ CLEAR</button>
+      <button class="tbtn tbtn-demo" id="btn-demo" onclick="toggleDemo()">▶ HEALTH DEMO</button>
+      <button class="tbtn tbtn-clr" onclick="clearLeak()">✕ RESET HEALTH</button>
     </div>
     <div class="tbmetrics">
       <div class="tbm">
@@ -1595,36 +1595,36 @@
   <div id="main">
     <!-- LEFT PANEL -->
     <div class="panel" id="lp">
-      <div class="sh">Engine Zones</div>
+      <div class="sh">Engine Subsystems & Health Zones</div>
       <div class="zcard zc1" id="zc1" onclick="focusZone(1)">
-        <div class="zn">Z1 — INTAKE</div>
-        <div class="zd">Airflow meter → Compressor inlet</div>
+        <div class="zn">Z1 — AIR INTAKE & MAF</div>
+        <div class="zd">Air scoop → Pleated filter → MAF meter → Compressor duct</div>
         <div class="zst" id="zs1">■ NOMINAL</div>
       </div>
       <div class="zcard zc2" id="zc2" onclick="focusZone(2)">
-        <div class="zn">Z2 — CHARGE AIR</div>
-        <div class="zd">Compressor → CAC → Intake manifold</div>
+        <div class="zn">Z2 — BOOST & CHARGE-AIR</div>
+        <div class="zd">Turbo compressor → Intercooler (CAC) → Throttle → Plenum</div>
         <div class="zst" id="zs2">■ NOMINAL</div>
       </div>
       <div class="zcard zc3" id="zc3" onclick="focusZone(3)">
-        <div class="zn">Z3 — EXHAUST</div>
-        <div class="zd">Manifold → Turbo → DOC → DPF → SCR</div>
+        <div class="zn">Z3 — HOT EXHAUST & TURBINE</div>
+        <div class="zd">Exhaust headers → Turbo turbine → Wastegate → Silencer</div>
         <div class="zst" id="zs3">■ NOMINAL</div>
       </div>
       <div class="zcard zcf" id="zcf" onclick="focusZone(4)">
-        <div class="zn">ZF — FUEL SYSTEM</div>
-        <div class="zd">HP pump → Common rail → MEUI injectors</div>
+        <div class="zn">ZF — FUEL INJECTION SYSTEM</div>
+        <div class="zd">Dual-lane HP pump → Fuel rail → Direct EFI injectors</div>
         <div class="zst" id="zsf">■ NOMINAL</div>
       </div>
 
-      <div class="sh">Simulate Leak</div>
+      <div class="sh">Inject Fault / Health Anomaly</div>
       <div class="lkgrid">
-        <button class="lkbtn" id="lb-A" onclick="simLeak('A')">A<span class="lksub">Airflow</span></button>
-        <button class="lkbtn" id="lb-B" onclick="simLeak('B')">B<span class="lksub">Pre-CAC</span></button>
-        <button class="lkbtn" id="lb-C" onclick="simLeak('C')">C<span class="lksub">Post-CAC</span></button>
-        <button class="lkbtn" id="lb-D" onclick="simLeak('D')">D<span class="lksub">Exh.Man</span></button>
-        <button class="lkbtn" id="lb-E" onclick="simLeak('E')">E<span class="lksub">DPF/SCR</span></button>
-        <button class="lkbtn" id="lb-F" onclick="simLeak('F')">⚠FUEL<span class="lksub">Rail</span></button>
+        <button class="lkbtn" id="lb-A" onclick="simLeak('A')">A<span class="lksub">MAF Drift</span></button>
+        <button class="lkbtn" id="lb-B" onclick="simLeak('B')">B<span class="lksub">Boost Loss</span></button>
+        <button class="lkbtn" id="lb-C" onclick="simLeak('C')">C<span class="lksub">CAC Ineff</span></button>
+        <button class="lkbtn" id="lb-D" onclick="simLeak('D')">D<span class="lksub">Exh Blowby</span></button>
+        <button class="lkbtn" id="lb-E" onclick="simLeak('E')">E<span class="lksub">Wastegate</span></button>
+        <button class="lkbtn" id="lb-F" onclick="simLeak('F')">⚠FUEL<span class="lksub">Rail Drop</span></button>
       </div>
 
       <div class="sh">Severity</div>
@@ -1697,7 +1697,7 @@
           </tr>
         </table>
       </div>
-      <button class="clrbtn" onclick="clearLeak()">✕ CLEAR SIMULATION</button>
+      <button class="clrbtn" onclick="clearLeak()">✕ RESET TO NOMINAL HEALTH</button>
     </div>
 
     <!-- CANVAS -->
@@ -1785,14 +1785,14 @@
         <div>STEADY STATE: <span class="ht">LOCKED</span></div>
       </div>
       <div id="engname">
-        <div class="ent">AERO PISTON ENGINE</div>
-        <div class="ens">18.1L INLINE-6 · 597kW · TWIN-TURBO DIESEL</div>
+        <div class="ent">ROTAX 915 iS AERO PISTON ENGINE</div>
+        <div class="ens">104 kW (141 HP) · 4-CYL BOXER · TURBOCHARGED & INTERCOOLED · FADEC EFI</div>
       </div>
       <div id="mso">
         <div class="msot" id="msot">LOADING MODEL...</div>
       </div>
       <div id="alert">
-        <div class="alt">⚠ LEAK DETECTED</div>
+        <div class="alt">⚠ HEALTH ANOMALY DETECTED</div>
         <div class="alz" id="al-z">Zone B</div>
         <div class="alc" id="al-c">—</div>
       </div>
@@ -1802,14 +1802,14 @@
     <div class="panel" id="rp">
       <div id="gng" class="go">
         <div id="gngl">GO</div>
-        <div id="gngs">All zones nominal</div>
+        <div id="gngs">All subsystems nominal · Health Index: 98.6%</div>
       </div>
-      <div class="sh">Energy Field Score</div>
+      <div class="sh">Energy Field Health Score</div>
       <div class="dc">
         <div class="dr">
           <div class="dn" id="ef-score">0.14</div>
           <div class="di">
-            <div class="dl">FROBENIUS DEVIATION</div>
+            <div class="dl">RESIDUAL FROBENIUS DEVIATION</div>
             <div class="dth" id="ef-thresh" style="color:var(--teal)">BELOW THRESHOLD (2.50)</div>
           </div>
         </div>
@@ -1817,20 +1817,20 @@
           <div class="dbar" id="ef-bar" style="width:5.6%;background:var(--teal)"></div>
         </div>
       </div>
-      <div class="sh">Live Sensor Feed</div>
+      <div class="sh">Live Sensor & Residual Feed</div>
       <div id="sw"></div>
-      <div class="sh">Energy Field 6×6</div>
+      <div class="sh">Energy Residual Field 6×6</div>
       <div class="efw">
         <div
           style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--muted);letter-spacing:.07em;margin-bottom:3px">
-          CORRELATION DEVIATION MATRIX</div>
+          CROSS-CHANNEL RESIDUAL DEVIATION MATRIX</div>
         <div class="efg" id="efg"></div>
         <div class="eflb" id="efl"></div>
       </div>
       <div class="sh">Recommended Action</div>
       <div class="ac" id="ac">
-        <div class="act">// SYSTEM RECOMMENDATION</div>
-        <div class="acv" id="acv" style="color:var(--teal)">Engine nominal. All twin residuals within ±2% tolerance.
+        <div class="act">// PREDICTIVE HEALTH ADVISORY</div>
+        <div class="acv" id="acv" style="color:var(--teal)">Engine nominal. All physics residuals within ±2% baseline tolerance. RUL > 1,200 hrs.
         </div>
       </div>
     </div>
@@ -3122,10 +3122,10 @@
 
     function getZoneName(obj) {
       const names = {
-        1: 'Zone 1 — Air Intake Scoop & MAF Filter',
-        2: 'Zone 2 — Turbocharger & Charge-Air Cooler',
-        3: 'Zone 3 — Exhaust Manifold & Muffler',
-        4: 'Zone 4 — Fuel Injection System (Zone F - Critical)'
+        1: 'Subsystem 1 — Air Intake & MAF Sensor (Zone 1)',
+        2: 'Subsystem 2 — Turbocharger & Charge-Air Cooler (Zone 2)',
+        3: 'Subsystem 3 — Exhaust Manifold & Turbine (Zone 3)',
+        4: 'Subsystem 4 — Fuel Injection System (Zone F - Critical Safety)'
       };
       const partRef = obj.userData.__partRef || obj;
       const partName = partRef.userData.__name || (obj.parent && obj.parent.userData.__name);
@@ -3170,15 +3170,15 @@
       T_exh_man: { v: 512, u: '°C', mn: 280, mx: 800, c: '#FF6600' },
       dP_dpf: { v: 4.2, u: 'kPa', mn: 0, mx: 22, c: '#FF9944' },
     };
-    const SN = { MAF: 'Mass Air Flow', MAP_boost: 'Boost Pressure', MAP_cac: 'CAC Outlet Press', T_cac_out: 'CAC Outlet Temp', T_exh_man: 'Exh Manifold Temp', dP_dpf: 'DPF Back-Pressure' };
+    const SN = { MAF: 'Mass Air Flow (MAF)', MAP_boost: 'Boost Pressure (MAP)', MAP_cac: 'CAC Manifold Press', T_cac_out: 'Charge-Air Temp (MAT)', T_exh_man: 'Exhaust Gas Temp (EGT)', dP_dpf: 'Turbine Delta-P (ΔP)' };
 
     const LEAK_DEF = {
-      A: { zone: 1, sen: 'MAF', d: -.15, lbl: 'Zone A — Airflow Meter → Compressor', act: 'Inspect MAF piping and housing seal. Check hose clamp torque (12 Nm). Verify no cracks in flex coupling.' },
-      B: { zone: 2, sen: 'MAP_boost', d: -.17, lbl: 'Zone B — Compressor Outlet / Pre-CAC', act: 'Inspect turbocharger outlet V-band clamp (68 Nm). Check boost pipe weld seam near elbow radius.' },
-      C: { zone: 2, sen: 'MAP_cac', d: -.14, lbl: 'Zone C — CAC Outlet → Intake Manifold', act: 'Inspect CAC outlet silicone hose and spring clamps. Check intercooler end-tank welds.' },
-      D: { zone: 3, sen: 'T_exh_man', d: -.12, lbl: 'Zone D — Exhaust Manifold Gasket', act: 'Inspect exhaust manifold gaskets cyl 3-4. Check stud torque (65 Nm). Look for carbon tracking.' },
-      E: { zone: 3, sen: 'dP_dpf', d: -.23, lbl: 'Zone E — DPF/SCR Aftertreatment', act: 'Inspect DPF inlet/outlet flange gaskets. Check SCR inlet flex joint. Verify DEF injector nozzle seal.' },
-      F: { zone: 4, sen: 'MAP_boost', d: -.05, lbl: '⚠ FUEL RAIL LEAK — CRITICAL', act: 'STOP ENGINE IMMEDIATELY. Fuel rail leak — FIRE HAZARD. Inspect rail o-rings and MEUI injector seals.' },
+      A: { zone: 1, sen: 'MAF', d: -.15, lbl: 'Zone 1 — Air Intake & MAF Sensor Drift', act: 'Inspect MAF sensor connector, intake filter element, and ducting. Recalibrate intake air-density model.' },
+      B: { zone: 2, sen: 'MAP_boost', d: -.17, lbl: 'Zone 2 — Turbo Compressor Boost Pressure Loss', act: 'Inspect turbocharger compressor housing, V-band clamp, and boost ducting. Check compressor wheel tip clearance.' },
+      C: { zone: 2, sen: 'MAP_cac', d: -.14, lbl: 'Zone 2 — Intercooler (CAC) Thermal Inefficiency', act: 'Inspect CAC heat exchanger core. Check for cooling fin blockage, thermal heat soak, or end-tank pressure loss.' },
+      D: { zone: 3, sen: 'T_exh_man', d: -.12, lbl: 'Zone 3 — Exhaust Manifold Thermal Blowby', act: 'Inspect cylinder exhaust manifold gasket interfaces. Check stud torque (65 Nm) and monitor EGT cylinder imbalance.' },
+      E: { zone: 3, sen: 'dP_dpf', d: -.23, lbl: 'Zone 3 — Wastegate Actuator Drift & Turbine ΔP', act: 'Inspect pneumatic wastegate actuator linkage and turbine bypass valve. Check for actuator diaphragm fatigue or carbon binding.' },
+      F: { zone: 4, sen: 'MAP_boost', d: -.05, lbl: '⚠ CRITICAL FAULT — Fuel Rail Pressure Loss', act: 'CRITICAL SAFETY ALERT: Fuel rail pressure loss detected — Fire/starvation risk. Inspect dual-lane HP pump and injector seals.' },
     };
 
     const LEAK_POS = {
@@ -3285,21 +3285,21 @@
       // Zone statuses
       ['zs1', 'zs2', 'zs3', 'zsf'].forEach(id => { const el = document.getElementById(id); if (el) { el.textContent = '■ NOMINAL'; el.className = 'zst'; } });
       const sid = ['zs1', 'zs2', 'zs3', 'zsf'][def.zone - 1];
-      document.getElementById(sid).textContent = '■ LEAK DETECTED'; document.getElementById(sid).className = 'zst bad';
+      document.getElementById(sid).textContent = z === 'F' ? '■ CRITICAL FAULT' : '■ ANOMALY DETECTED'; document.getElementById(sid).className = 'zst bad';
 
       // Go/No-Go
       document.getElementById('gng').className = 'ng';
       document.getElementById('gngl').textContent = 'NO-GO';
       document.getElementById('gngs').textContent = def.lbl.substring(0, 40);
       document.getElementById('sbadge').className = 'sbad';
-      document.getElementById('stxt').textContent = 'LEAK DETECTED';
+      document.getElementById('stxt').textContent = z === 'F' ? 'CRITICAL FAULT' : 'ANOMALY DETECTED';
 
       const conf = 72 + APP.severity * 9 + Math.round(Math.random() * 5);
       const sev = ['', 'Small (2%)', 'Medium (8%)', 'Large (15%)'][APP.severity];
       const flow = [0, 2, 8, 15][APP.severity];
       document.getElementById('hv-conf').textContent = conf + '%'; document.getElementById('hv-conf').style.color = 'var(--red)';
       document.getElementById('al-z').textContent = def.lbl;
-      document.getElementById('al-c').textContent = `Confidence: ${conf}% · ${sev} · ~${flow}% flow loss`;
+      document.getElementById('al-c').textContent = `Confidence: ${conf}% · Severity: ${sev} · Est. RUL Impact: -${flow * 4} hrs`;
       document.getElementById('alert').style.display = 'block';
 
       document.getElementById('ac').className = 'ac w';
@@ -3328,11 +3328,11 @@
       document.querySelectorAll('.lkbtn').forEach(b => b.classList.remove('on'));
       ['zs1', 'zs2', 'zs3', 'zsf'].forEach(id => { const el = document.getElementById(id); if (el) { el.textContent = '■ NOMINAL'; el.className = 'zst'; } });
       document.getElementById('gng').className = 'go';
-      document.getElementById('gngl').textContent = 'GO'; document.getElementById('gngs').textContent = 'All zones nominal';
+      document.getElementById('gngl').textContent = 'GO'; document.getElementById('gngs').textContent = 'All subsystems nominal · Health Index: 98.6%';
       document.getElementById('sbadge').className = 'sbok'; document.getElementById('stxt').textContent = 'ENGINE HEALTHY';
       document.getElementById('hv-conf').textContent = '—'; document.getElementById('hv-conf').style.color = 'var(--muted)';
       document.getElementById('alert').style.display = 'none';
-      document.getElementById('ac').className = 'ac'; document.getElementById('acv').textContent = 'Engine nominal. All twin residuals within ±2% tolerance.'; document.getElementById('acv').style.color = 'var(--teal)';
+      document.getElementById('ac').className = 'ac'; document.getElementById('acv').textContent = 'Engine nominal. All physics residuals within ±2% baseline tolerance. RUL > 1,200 hrs.'; document.getElementById('acv').style.color = 'var(--teal)';
       document.getElementById('ef-score').textContent = '0.14'; document.getElementById('ef-score').style.color = 'var(--gold)';
       document.getElementById('ef-bar').style.width = '5.6%'; document.getElementById('ef-bar').style.background = 'var(--teal)';
       document.getElementById('ef-thresh').textContent = 'BELOW THRESHOLD (2.50)'; document.getElementById('ef-thresh').style.color = 'var(--teal)';

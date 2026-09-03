@@ -1,26 +1,32 @@
 @echo off
+setlocal enabledelayedexpansion
+
 echo ============================================================
 echo   AeroTwin - MALE UAV Aero Engine Diagnostics
 echo   Starting Backend + Frontend Servers
 echo ============================================================
 echo.
 
-:: Kill existing backend if running
-for /f "tokens=5" %%a in ('netstat -aon ^| find ":8000" ^| find "LISTENING"') do taskkill /f /pid %%a 2>nul
-for /f "tokens=5" %%a in ('netstat -aon ^| find ":5173" ^| find "LISTENING"') do taskkill /f /pid %%a 2>nul
+:: Define directory paths safely with quotes
+set "BACKEND_DIR=%~dp0backend"
+set "FRONTEND_DIR=%~dp0frontend"
 
-:: Convert to short 8.3 paths to avoid & breaking cmd
-for %%I in ("%~dp0backend") do set "BACKEND_SHORT=%%~sI"
-for %%I in ("%~dp0frontend") do set "FRONTEND_SHORT=%%~sI"
+:: Kill existing processes on ports 8000 and 5173 if running
+for /f "tokens=5" %%a in ('netstat -aon ^| find ":8000" ^| find "LISTENING"') do (
+    if not "%%a"=="0" taskkill /f /pid %%a 2>nul
+)
+for /f "tokens=5" %%a in ('netstat -aon ^| find ":5173" ^| find "LISTENING"') do (
+    if not "%%a"=="0" taskkill /f /pid %%a 2>nul
+)
 
 :: Start Backend
 echo [1/2] Starting Backend Server (FastAPI on port 8000)...
-start "AeroTwin Backend" cmd /k "cd /d %BACKEND_SHORT% && python main.py"
+start "AeroTwin Backend" /D "%BACKEND_DIR%" cmd /k "python main.py"
 timeout /t 5 /nobreak > nul
 
 :: Start Frontend Dev Server
 echo [2/2] Starting Frontend Dev Server (Vite on port 5173)...
-start "AeroTwin Frontend" cmd /k "cd /d %FRONTEND_SHORT% && npm run dev"
+start "AeroTwin Frontend" /D "%FRONTEND_DIR%" cmd /k "npm run dev"
 timeout /t 3 /nobreak > nul
 
 echo.
@@ -33,4 +39,3 @@ echo ============================================================
 echo.
 echo Opening dashboard in browser...
 start http://localhost:5173
-

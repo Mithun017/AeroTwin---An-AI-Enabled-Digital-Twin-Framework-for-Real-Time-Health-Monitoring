@@ -1,1 +1,0 @@
-# AeroTwin — Digital Twin Models
